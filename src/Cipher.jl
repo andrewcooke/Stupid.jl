@@ -7,6 +7,11 @@ export stupid, constant_text, encrypt, to_vector, tests
 
 function stupid(key::Vector{Uint8}; debug=false, forwards=true)
 
+    # this is a generator so that we can do pipelined analysis without
+    # creating large intermediate files (and i found it generally useful
+    # to use generators while working on the crypto challenge in python,
+    # so wanted to explore the same ideas here).
+
     key = copy(key)  # don't mutate the passed key
     key_length = length(key)
     @assert key_length >= 3

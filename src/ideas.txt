@@ -13,4 +13,4 @@
 
 - does state repeat too quickly?  what about with text?
 
-- check decryption is possible!
+- early cipher only depends on part of key?  incremental crack?
