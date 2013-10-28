@@ -2,7 +2,7 @@
 module Cipher
 using Tasks2
 
-export stupid, constant_text, encrypt, to_vector, tests
+export stupid, constant_text, byte_text, encrypt, to_vector, to_hex, tests
 
 
 function stupid(key::Vector{Uint8}; debug=false, forwards=true)
@@ -25,8 +25,9 @@ function stupid(key::Vector{Uint8}; debug=false, forwards=true)
 
         while true
             if debug
-                @printf("%d %s %d %d %d\n", 
-                        count, bytes2hex(key), pos_a, pos_b, pos_c)
+                @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
+                        count, bytes2hex(key), pos_a, key[pos_a+1], 
+                        pos_b, key[pos_b+1], pos_c, key[pos_c+1])
             end
             old_a = pos_a
             pos_a = key[pos_b+1] % key_length
@@ -62,6 +63,17 @@ function byte_text(text)
     function task()
         for c in text
             produce2(c)
+        end
+    end
+
+    Task(task)
+end
+
+function counter(length)
+
+    function task()
+        for i = 1:length
+            produce(i)
         end
     end
 
@@ -108,6 +120,8 @@ function test_vectors()
     @assert cipher == "55000102030405060708090a0b0c0d0e" cipher
     cipher = to_hex(encrypt(three_zeroes, byte_text(b"secret")))
     @assert cipher == "731607131415" cipher
+    cipher = to_hex(encrypt(three_zeroes, counter(1)))
+#    @assert cipher == "00000102030405060708090a0b0c0d0e" cipher
 
     eight_zeroes = hex2bytes("0000000000000000")
     cipher = to_hex(encrypt(eight_zeroes, constant_text(0x10)))

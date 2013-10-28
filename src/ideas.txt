@@ -1,6 +1,6 @@
 
 - similar keys (bit distance?) give similar encryptions.  use this to
-  hunt for keys.
+  hunt for keys.  genetic?
 
 - plaintext that goes 0,1,2,3... will xor count.
 
@@ -14,3 +14,13 @@
 - does state repeat too quickly?  what about with text?
 
 - early cipher only depends on part of key?  incremental crack?
+
+- if you look at the text vectors, constant values encrypt to the same
+  value, except for a prefix.  how general is this?  is the encryption
+  some kind of differential?  what does that mean?
+
+- just run it backwards.  when we can't infer, guess.  how does that
+  reduce the search space?
+
+- measure how long it takes to change key by position.  how variable
+  it is.
