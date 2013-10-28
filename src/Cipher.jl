@@ -69,11 +69,11 @@ function byte_text(text)
     Task(task)
 end
 
-function counter(length)
+function counter(length; start=0)
 
     function task()
         for i = 1:length
-            produce(i)
+            produce2(uint8(i - 1 + start))
         end
     end
 
@@ -120,8 +120,8 @@ function test_vectors()
     @assert cipher == "55000102030405060708090a0b0c0d0e" cipher
     cipher = to_hex(encrypt(three_zeroes, byte_text(b"secret")))
     @assert cipher == "731607131415" cipher
-    cipher = to_hex(encrypt(three_zeroes, counter(1)))
-#    @assert cipher == "00000102030405060708090a0b0c0d0e" cipher
+    cipher = to_hex(encrypt(three_zeroes, counter(8))) # state here always zero
+    @assert cipher == "0001020304050607" cipher
 
     eight_zeroes = hex2bytes("0000000000000000")
     cipher = to_hex(encrypt(eight_zeroes, constant_text(0x10)))
@@ -131,6 +131,8 @@ function test_vectors()
     @assert cipher == "02010202030404060708090a0b0c0d0e" cipher
     cipher = to_hex(encrypt(hex2bytes("010203"), byte_text(b"secret")))
     @assert cipher == "711704136263" cipher
+    cipher = to_hex(encrypt(hex2bytes("010203"), counter(8)))
+    @assert cipher == "0200010305050607" cipher
 end
 
 function test_roundtrip()
