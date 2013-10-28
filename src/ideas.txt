@@ -1,0 +1,16 @@
+
+- similar keys (bit distance?) give similar encryptions.  use this to
+  hunt for keys.
+
+- plaintext that goes 0,1,2,3... will xor count.
+
+- eight bit shows state directly.
+
+- can we construct state / keys from known plaintext (all zeroes)
+
+- since plaintext has patterns, and plaintext critical for randomness, 
+  ordinary text will not be random when encrypted.
+
+- does state repeat too quickly?  what about with text?
+
+- check decryption is possible!

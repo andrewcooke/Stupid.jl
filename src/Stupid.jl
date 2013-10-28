@@ -1,5 +1,4 @@
 module Stupid
+using Cipher, Tasks2
 
-# package code goes here
-
-end # module
+end
