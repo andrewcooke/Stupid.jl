@@ -16,3 +16,12 @@ information in the comments.
 **Language** - [Julia](http://julialang.org/) combines the speed of C
 (or close) with the flexibility of Python and has ambitions to replace
 statistical analysis packages like R.
+
+## Attacks
+
+### Known Plaintext, Bit Distance
+
+For a given plaintext, changing a bit of the key changes only a small
+amount of the initial ciphertext.  This allows a search for the key.
+
+More information in the [BitDistance](./src/BitDistance.jl) module.
