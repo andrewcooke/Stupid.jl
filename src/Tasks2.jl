@@ -1,7 +1,7 @@
 
 module Tasks2
 
-export produce2, consume2
+export produce2, consume2, collect2, take, choices, repeat, constant, iterate
 
 function produce2(v)
     ct = current_task()
@@ -36,6 +36,55 @@ function consume2(P::Task, args...)
         end
     end
     v
+end
+
+function collect2(T::Type, task)
+    a = Array(T, 0)
+    for v in task
+        push!(a, v)
+    end
+    a
+end
+
+function take(n, source)
+    function task()
+        while n > 0
+            produce2(consume2(source))
+            n = n - 1
+        end
+    end
+
+    Task(task)
+end
+
+function repeat(f)
+
+    function task()
+        while true
+            produce2(f())
+        end
+    end
+
+    Task(task)
+end
+
+function choices(alphabet)
+    repeat(() -> choice(alphabet))
+end
+
+function constant(n)
+    repeat(() -> n)
+end
+
+function iterate(seq)
+    
+    function task()
+        for s in seq
+            produce2(s)
+        end
+    end
+
+    Task(task)
 end
 
 end

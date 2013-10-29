@@ -2,7 +2,7 @@
 module Cipher
 using Tasks2
 
-export stupid, constant_text, byte_text, encrypt, to_vector, to_hex, tests
+export stupid, constant_text, byte_text, encrypt, to_hex, tests
 
 
 function stupid(key::Vector{Uint8}; debug=false, forwards=true)
@@ -64,26 +64,7 @@ function stupid(key::Vector{Uint8}; debug=false, forwards=true)
 end
 
 function constant_text(length, value::Uint8=zero(Uint8))
-    
-    function task()
-        while length > 0
-            produce2(value)
-            length = length - 1
-        end
-    end
-
-    Task(task)
-end
-
-function byte_text(text)
-
-    function task()
-        for c in text
-            produce2(c)
-        end
-    end
-
-    Task(task)
+    take(length, constant(value))
 end
 
 function counter(length; start=0)
@@ -110,16 +91,8 @@ function encrypt(key, text; debug=false, forwards=true)
     Task(task)
 end
     
-function to_vector(task)
-    a = Array(Uint8, 0)
-    for c in task
-        push!(a, c)
-    end
-    a
-end
-
 function to_hex(task)
-    bytes2hex(to_vector(task))
+    bytes2hex(collect2(Uint8, task))
 end
 
 
@@ -135,7 +108,7 @@ function test_vectors()
     @assert cipher == "ff000102030405060708090a0b0c0d0e" cipher
     cipher = to_hex(encrypt(three_zeroes, constant_text(0x10, 0x55)))
     @assert cipher == "55000102030405060708090a0b0c0d0e" cipher
-    cipher = to_hex(encrypt(three_zeroes, byte_text(b"secret")))
+    cipher = to_hex(encrypt(three_zeroes, iterate(b"secret")))
     @assert cipher == "731607131415" cipher
     cipher = to_hex(encrypt(three_zeroes, counter(8))) # state here always zero
     @assert cipher == "0001020304050607" cipher
@@ -147,21 +120,26 @@ function test_vectors()
     one_two_three = hex2bytes("010203")
     cipher = to_hex(encrypt(one_two_three, constant_text(0x10)))
     @assert cipher == "02010202030404060708090a0b0c0d0e" cipher
-    cipher = to_hex(encrypt(one_two_three, byte_text(b"secret")))
+    cipher = to_hex(encrypt(one_two_three, iterate(b"secret")))
     @assert cipher == "711704136263" cipher
     cipher = to_hex(encrypt(one_two_three, counter(8)))
     @assert cipher == "0200010305050607" cipher
+
+    println("test_vectors ok")
 end
 
 function test_roundtrip()
     key = hex2bytes("010203")
-    plain = to_vector(encrypt(key, 
-                              encrypt(key, byte_text(b"secret")), 
-                              forwards=false))
+    plain = collect2(Uint8, 
+                     encrypt(key, 
+                             encrypt(key, iterate(b"secret")), 
+                             forwards=false))
     @assert plain == b"secret" plain
+    println("test_roundtrip ok")
 end
 
 function tests()
+    println("Cipher")
     test_vectors()
     test_roundtrip()
 end

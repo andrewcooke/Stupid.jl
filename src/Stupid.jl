@@ -1,4 +1,4 @@
 module Stupid
-using Cipher, Tasks2
+using Cipher, Tasks2, BitDistance
 
 end
