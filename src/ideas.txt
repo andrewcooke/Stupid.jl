@@ -10,8 +10,6 @@
 
 - eight bit shows state directly.
 
-- can we construct state / keys from known plaintext (all zeroes)?
-
 - since plaintext has patterns, and plaintext critical for randomness, 
   ordinary text will not be random when encrypted.
 
@@ -23,10 +21,13 @@
   value, except for a prefix.  how general is this?  is the encryption
   some kind of differential?  what does that mean?
 
-- just run it backwards.  when we can't infer, guess.  how does that
-  reduce the search space?
+- can we construct state / keys from known plaintext (all zeroes)?
 
-- maybe set up a sat solver?!
+- maybe set up a sat solver?! (poc using text; if it works, wrap).
+
+- when plaintext unknown, just run it backwards.  when we can't infer,
+  guess.  how does that reduce the search space?  maybe with a reduced
+  alphabet?
 
 - measure how long it takes to change key by position.  how variable
   it is.
@@ -38,3 +39,7 @@
   plaintext and the same key?  what happens if you xor ciphertext with
   a counter?
 
+- for large, random keys, and constant plaintext, what structure do we
+  see?  are different keys similar in some way?  what happens when the
+  plaintext has structrue too?  are there correlations at 256 bytes
+  (counter looping)?
