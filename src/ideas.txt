@@ -2,11 +2,15 @@
 - similar keys (bit distance?) give similar encryptions.  use this to
   hunt for keys.  genetic?
 
-- plaintext that goes 0,1,2,3... will xor count.
+- is output similar to text?  measure bit distance letter by letter.
+  look at whether there is a lag (cross-correlation).
+
+- plaintext that goes 0,1,2,3... will xor count (state constantly zero
+  if key also zero).
 
 - eight bit shows state directly.
 
-- can we construct state / keys from known plaintext (all zeroes)
+- can we construct state / keys from known plaintext (all zeroes)?
 
 - since plaintext has patterns, and plaintext critical for randomness, 
   ordinary text will not be random when encrypted.
@@ -22,5 +26,15 @@
 - just run it backwards.  when we can't infer, guess.  how does that
   reduce the search space?
 
+- maybe set up a sat solver?!
+
 - measure how long it takes to change key by position.  how variable
   it is.
+
+- quantify how things (don't) scale with keysize.
+
+- what happens if you xor ciphertext with the same plaintext encrypted
+  with an empty key?  what happens if you xor ciphertext with empty
+  plaintext and the same key?  what happens if you xor ciphertext with
+  a counter?
+

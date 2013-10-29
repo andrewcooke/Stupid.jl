@@ -15,5 +15,4 @@ information in the comments.
 
 **Language** - [Julia](http://julialang.org/) combines the speed of C
 (or close) with the flexibility of Python and has ambitions to replace
-statistical analysis packages like R.  So it seemed like the perfect
-candidate for this work.
+statistical analysis packages like R.

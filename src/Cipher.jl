@@ -23,6 +23,23 @@ function stupid(key::Vector{Uint8}; debug=false, forwards=true)
 
     function task(plain::Uint8)
 
+        # the original isn't clear on the size of the keys (in fact,
+        # it mentions 32bits at one point).  here i've gone with what
+        # seems more normal - encrypting a stream of bytes with keys
+        # in bytes.
+
+        # the original had the encrypted text named as "decrypted" and
+        # vice versa.  i don't know if that was a language mistake, or
+        # something deeper.  it may mean that the "poison" is
+        # incorrect below.
+
+        # it's unclear to me why (key_length - 1) is used, but that's
+        # verbatim.
+
+        # julia uses 1-based indexing, hence the "pos_X+1" eveywhere.
+        # i think that keeps the semantics equivalent (no test
+        # vectors).
+
         while true
             if debug
                 @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
@@ -127,11 +144,12 @@ function test_vectors()
     cipher = to_hex(encrypt(eight_zeroes, constant_text(0x10)))
     @assert cipher == "00000102030405060708090a0b0c0d0e" cipher
 
-    cipher = to_hex(encrypt(hex2bytes("010203"), constant_text(0x10)))
+    one_two_three = hex2bytes("010203")
+    cipher = to_hex(encrypt(one_two_three, constant_text(0x10)))
     @assert cipher == "02010202030404060708090a0b0c0d0e" cipher
-    cipher = to_hex(encrypt(hex2bytes("010203"), byte_text(b"secret")))
+    cipher = to_hex(encrypt(one_two_three, byte_text(b"secret")))
     @assert cipher == "711704136263" cipher
-    cipher = to_hex(encrypt(hex2bytes("010203"), counter(8)))
+    cipher = to_hex(encrypt(one_two_three, counter(8)))
     @assert cipher == "0200010305050607" cipher
 end
 
