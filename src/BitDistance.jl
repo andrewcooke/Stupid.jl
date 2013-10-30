@@ -13,7 +13,7 @@ export tests
 # the ciphertext by a small amount, at least early in the message.
 
 # to test this, we encrypt text with a random key, modify the key,
-# encrypt again, and then plot th ebit distance between keys with the
+# encrypt again, and then plot the bit distance between keys with the
 # bit distance between ciphertexts.
 
 # it turns out that there is little correlation (except for the first
@@ -82,6 +82,9 @@ export tests
 #  47 0300000000010004 1/00 2/00 3/00
 #  48 0000000000010004 0/00 1/00 1/00
 #  49 0000000000010004 0/00 1/00 1/00
+
+# which appears to happen when pos_a == pos_c (the contents are then
+# xored, giving zero).
 
 
 function count_bits(n::Uint8)
