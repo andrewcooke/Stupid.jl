@@ -210,7 +210,7 @@ function tests()
     println("BitDistance")
     test_distance()
 #    plot_distances(100)
-    examine_state()
+#    examine_state()
 end
 
 end
