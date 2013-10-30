@@ -60,7 +60,6 @@ function take(n, source)
 end
 
 function repeat(f)
-
     function task()
         while true
             produce2(f())
@@ -79,7 +78,6 @@ function constant(n)
 end
 
 function iterate(seq)
-    
     function task()
         for s in seq
             produce2(s)

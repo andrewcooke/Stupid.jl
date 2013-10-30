@@ -44,4 +44,10 @@
   plaintext has structrue too?  are there correlations at 256 bytes
   (counter looping)?
 
-- the example siphers show very little variation even with very different keys.  why?  how to exploit this?
+- the example ciphers show very little variation even with very
+  different keys.  why (it was a bug!)?  how to exploit this?
+
+- it seems like state from the key "dies out" over time (counter and
+  zero plaintexts).  if so, then maybe long text tends to the same
+  "self-encryted" value, no matter what the key.  if so, then we can
+  look for patterns related to common fragments.
