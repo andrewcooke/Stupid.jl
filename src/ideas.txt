@@ -43,3 +43,5 @@
   see?  are different keys similar in some way?  what happens when the
   plaintext has structrue too?  are there correlations at 256 bytes
   (counter looping)?
+
+- the example siphers show very little variation even with very different keys.  why?  how to exploit this?

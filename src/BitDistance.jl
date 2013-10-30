@@ -9,18 +9,25 @@ export tests
 # depends on only two bytes of the key.  and the dependeny is very
 # simple (xor).
 
-# so we expect the output for a fixed plaintext to change "smoothly"
-# with changes to the key - that the bit distance between cipher texts
-# should be small when the bit distance between keys is small.
+# so it seems like channge the key by a small amount may only change
+# the ciphertext by a small amount, at least early in the message.
 
-# if that is correct then we can seach for the key by using the bit
-# distance between the ciphertext for the key and the known
-# ciphertext.
+# to test this, we encrypt text with a random key, modify the key,
+# encrypt again, and then plot th ebit distance between keys with the
+# bit distance between ciphertexts.
 
-# below we:
-# 1 - show this smoothness.
-# 2 - estimate the amount of ciphertext needed to find all key bits.
-# 3 - implement the search with genetic programming.
+# it turns out that there is little correlation (except for the first
+# key bit in certain cases).
+
+# however, when the message is a counter (which xors against the
+# counter in the prng core) the bit distance between ciphertexts is
+# curiously bimodal.
+
+# inspecting the ciphertexts in these cases, they appear like
+# fa3178ac9713e650: 61ad7394d10f770d9287eceba64c2c313f02192d121d080e12
+# 05132414172b202f29222d242023252a2b2a2f2d2c2f2c303132333435363738393a
+# 3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c
+# 5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f
 
 
 function count_bits(n::Uint8)
@@ -69,39 +76,59 @@ function change_random_bits(bytes)
     bytes
 end
 
-function distance(ptext, key_length=3, plain_length=8)
+function distance(ptext, key_length=3, plain_length=8; debug=false)
     plain = collect2(Uint8, take(plain_length, ptext))
     key1 = collect2(Uint8, take(key_length, rands(Uint8)))
     cipher1 = collect2(Uint8, encrypt(key1, plain))
     key2 = change_random_bits(key1)
     cipher2 = collect2(Uint8, encrypt(key2, plain))
-
-    bit_distance(key1, key2), bit_distance(cipher1, cipher2)
+    key_distance = bit_distance(key1, key2)
+    ciphertext_distance = bit_distance(cipher1, cipher2)
+    if debug
+        @printf("%s: %s  %s: %s  %2d %2d\n", 
+                bytes2hex(key1), bytes2hex(cipher1),
+                bytes2hex(key2), bytes2hex(cipher2),
+                key_distance, ciphertext_distance)
+        end
+    key_distance, ciphertext_distance
 end
 
-function distances(n, ptext, key_length=3, plain_length=8)
-    pairs = take(n, repeat(() -> distance(ptext, key_length, plain_length)))
+function distances(n, ptext, key_length=3, plain_length=8; debug=false)
+    pairs = take(n, repeat(() -> distance(ptext, key_length, plain_length, 
+                                          debug=debug)))
     data = collect(zip(pairs...))
     DataFrame(key_distance=[data[1]...], ciphertext_distance=[data[2]...])
 end
 
 function plot_distances(n)
     println("plot_distances begin")
-    draw(PNG("bitdistance-count-3-4.png", 15cm, 10cm), 
-         plot(distances(n, counter(), 3, 4),
+#    draw(PNG("bitdistance-count-3-4.png", 15cm, 10cm), 
+#         plot(distances(n, counter(), 3, 4, debug=true),
+#              x="key_distance", y="ciphertext_distance"))
+    draw(PNG("bitdistance-count-8-128.png", 15cm, 10cm), 
+         plot(distances(n, counter(), 8, 128, debug=true),
               x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-zero-8-128.png", 15cm, 10cm), 
+#         plot(distances(n, constant(0x0), 8, 128, debug=true),
+#              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-2bits-8-128.png", 15cm, 10cm), 
+#         plot(distances(n, choices([i for i=0x0:0x3]), 8, 128, debug=true),
+#              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-random-8-128.png", 15cm, 10cm), 
+#         plot(distances(n, rands(Uint8), 8, 128, debug=true),
+#              x="key_distance", y="ciphertext_distance"))
 #    draw(PNG("bitdistance-random.png", 15cm, 10cm), 
 #         plot(distances(n, rands(Uint8), key_length, plain_length),
 #              x="key_distance", y="ciphertext_distance"))
-    draw(PNG("bitdistance-zero-3-4.png", 15cm, 10cm), 
-         plot(distances(n, constant(0x0), 3, 4),
-              x="key_distance", y="ciphertext_distance"))
-    draw(PNG("bitdistance-zero-3-8.png", 15cm, 10cm), 
-         plot(distances(n, constant(0x0), 3, 8),
-              x="key_distance", y="ciphertext_distance"))
-    draw(PNG("bitdistance-zero-8-16.png", 15cm, 10cm), 
-         plot(distances(n, constant(0x0), 8, 16),
-              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-zero-3-4.png", 15cm, 10cm), 
+#         plot(distances(n, constant(0x0), 3, 4),
+#              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-zero-3-8.png", 15cm, 10cm), 
+#         plot(distances(n, constant(0x0), 3, 8),
+#              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-zero-8-16.png", 15cm, 10cm), 
+#         plot(distances(n, constant(0x0), 8, 16),
+#              x="key_distance", y="ciphertext_distance"))
 #    draw(PNG("bitdistance-4bit.png", 15cm, 10cm), 
 #         plot(distances(n, choices([i for i=0x0:0x7]), 
 #                        key_length, plain_length),
@@ -119,7 +146,7 @@ end
 function tests()
     println("BitDistance")
     test_distance()
-    plot_distances(100)
+#    plot_distances(100)
 end
 
 end
