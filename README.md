@@ -24,4 +24,4 @@ erase the PRNG state.  See the comments in
 [BitDistance.jl](src/BitDistance.jl) for more details.
 
 While this illustrates the weakness of the PRNG construction, it does
-not lead to an attack, since the key data is not exposed.
+not lead to an attack, since the key data are not exposed.
