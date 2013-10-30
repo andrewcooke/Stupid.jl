@@ -69,9 +69,8 @@ function change_random_bits(bytes)
     bytes
 end
 
-function random_distance(key_length=3, plain_length=8)
-
-    plain = collect2(Uint8, take(plain_length, rands(Uint8)))
+function distance(ptext, key_length=3, plain_length=8)
+    plain = collect2(Uint8, take(plain_length, ptext))
     key1 = collect2(Uint8, take(key_length, rands(Uint8)))
     cipher1 = collect2(Uint8, encrypt(key1, plain))
     key2 = change_random_bits(key1)
@@ -80,15 +79,34 @@ function random_distance(key_length=3, plain_length=8)
     bit_distance(key1, key2), bit_distance(cipher1, cipher2)
 end
 
-function random_distances(key_length=3, plain_length=8)
-    repeat(() -> random_distance(key_length, plain_length))
+function distances(n, ptext, key_length=3, plain_length=8)
+    pairs = take(n, repeat(() -> distance(ptext, key_length, plain_length)))
+    data = collect(zip(pairs...))
+    DataFrame(key_distance=[data[1]...], ciphertext_distance=[data[2]...])
 end
 
-function plot_distances(n, key_length=3, plain_length=8)
-    pairs = take(n, random_distances(key_length, plain_length))
-    vars = collect(zip(pairs...))  # better way to transpose?
-    df = DataFrame(key_distance=vars[1], ciphertext_distance=vars[2])
-    plot(df)
+function plot_distances(n)
+    println("plot_distances begin")
+    draw(PNG("bitdistance-count-3-4.png", 15cm, 10cm), 
+         plot(distances(n, counter(), 3, 4),
+              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-random.png", 15cm, 10cm), 
+#         plot(distances(n, rands(Uint8), key_length, plain_length),
+#              x="key_distance", y="ciphertext_distance"))
+    draw(PNG("bitdistance-zero-3-4.png", 15cm, 10cm), 
+         plot(distances(n, constant(0x0), 3, 4),
+              x="key_distance", y="ciphertext_distance"))
+    draw(PNG("bitdistance-zero-3-8.png", 15cm, 10cm), 
+         plot(distances(n, constant(0x0), 3, 8),
+              x="key_distance", y="ciphertext_distance"))
+    draw(PNG("bitdistance-zero-8-16.png", 15cm, 10cm), 
+         plot(distances(n, constant(0x0), 8, 16),
+              x="key_distance", y="ciphertext_distance"))
+#    draw(PNG("bitdistance-4bit.png", 15cm, 10cm), 
+#         plot(distances(n, choices([i for i=0x0:0x7]), 
+#                        key_length, plain_length),
+#              x="key_distance", y="ciphertext_distance"))
+    println("plot_distances end")
 end
 
 

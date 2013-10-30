@@ -1,6 +1,6 @@
 
 module Cipher
-using Tasks2
+using Tasks2, Rand2
 
 export stupid, constant_text, byte_text, encrypt, to_hex, tests
 
@@ -96,6 +96,16 @@ function to_hex(task)
 end
 
 
+function random_examples()
+    println("random_examples begin")
+    for i = 1:5
+        key = collect2(Uint8, take(3, rands(Uint8)))
+        cipher = to_hex(encrypt(key, constant_text(0x10)))
+        @printf("%s: %s\n", bytes2hex(key), to_hex(cipher))
+    end
+    println("random_examples end")
+end
+
 function test_vectors()
 
     # no test vectors are provided, so this is only an internal check
@@ -142,6 +152,7 @@ function tests()
     println("Cipher")
     test_vectors()
     test_roundtrip()
+    random_examples()
 end
 
 end

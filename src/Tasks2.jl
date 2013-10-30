@@ -1,7 +1,9 @@
 
 module Tasks2
+using Rand2
 
-export produce2, consume2, collect2, take, choices, repeat, constant, iterate
+export produce2, consume2, collect2, take, choices, repeat, constant,
+iterate, counter
 
 function produce2(v)
     ct = current_task()
@@ -85,6 +87,26 @@ function iterate(seq)
     end
 
     Task(task)
+end
+
+function counter(start=0)
+    repeat() do
+        save = start
+        start = start + 1
+        save
+    end
+end
+
+
+function test_counter()
+    c = collect(take(3, counter()))
+    @assert c == [0, 1, 2] c
+    println("test_counter ok")
+end
+
+function tests()
+    println("Tasks2")
+    test_counter()
 end
 
 end
