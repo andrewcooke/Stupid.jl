@@ -51,3 +51,10 @@
   zero plaintexts).  if so, then maybe long text tends to the same
   "self-encryted" value, no matter what the key.  if so, then we can
   look for patterns related to common fragments.
+
+- can we poison the state with a counter prefix, then extract the state,
+  then continue?
+
+- what's the distance between the same text with different keys?
+  maybe it's less than expected because self-encrypting dominates the
+  key after some time?

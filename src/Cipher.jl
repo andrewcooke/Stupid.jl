@@ -107,7 +107,7 @@ end
 
 function encrypt(key::Array{Uint8}, plain::Array{Uint8};
                  debug=false, forwards=true)
-    encrypt(State(key), debug=debug, forwards=forwards)
+    encrypt(State(key), plain, debug=debug, forwards=forwards)
 end
 
 
@@ -182,8 +182,6 @@ function test_vectors()
     @assert cipher == "00000102030405060708090a0b0c0d0e" cipher
     cipher = to_hex(encrypt(three_zeroes, constant(0xff)), 0x10)
     @assert cipher == "ff000102030405060708090a0b0c0d0e" cipher
-    cipher = to_hex(encrypt(three_zeroes, constant(0x55)), 0x10)
-    @assert cipher == "55000102030405060708090a0b0c0d0e" cipher
     cipher = to_hex(encrypt(three_zeroes, iterate(b"secret")))
     @assert cipher == "731607131415" cipher
     cipher = to_hex(encrypt(three_zeroes, counter(0x0)), 0x10)
