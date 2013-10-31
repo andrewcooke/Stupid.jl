@@ -1,6 +1,6 @@
 
 module BitDistance
-using Cipher, Tasks2, Gadfly, DataFrames, Rand2
+using Cipher, Tasks2, Rand2
 
 export bit_distance, change_random_bits
 
@@ -41,6 +41,8 @@ function flip_bit(bit, bytes)  # bit is zero-indexed
 end
 
 function change_random_bits(bytes)
+    # this does selection without replacement (so no bit is changed
+    # more than once)
     b = 8 * length(bytes)
     bits = Int[i for i=0:b-1]
     for i = 1:rand(0:b)
