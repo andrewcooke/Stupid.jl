@@ -1,6 +1,6 @@
 
 module Prefix
-using BitDistance, Cipher, Gadfly, DataFrames, Rand2, Tasks2
+using Cipher, Tasks2
 
 export tests
 
