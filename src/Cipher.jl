@@ -6,6 +6,8 @@ export stupid, encrypt, to_hex, tests
 
 
 type State
+    # make persistent across calls so that we can examine and modify
+    # at will
     key_length::Int
     key::Array{Uint8}  # mutated
     count::Uint8
@@ -29,8 +31,10 @@ function Base.println(state::State)
             state.pos_c, state.key[state.pos_c+1])
 end
 
-function encrypt(state::State, plain::Uint8; debug=false, forwards=true)    
 
+# single step evaluation
+
+function encrypt(state::State, plain::Uint8; debug=false, forwards=true)    
     if debug
         println(state)
     end
@@ -55,8 +59,14 @@ function encrypt(state::State, plain::Uint8; debug=false, forwards=true)
 end
 
 function encrypt(state::State, plain::Integer; debug=false, forwards=true)
+    # handle lazy code as long as it's inside bounds
+    @assert typemin(Uint8) <= plain <= typemax(Uint8)
     encrypt(state, convert(Uint8, plain), debug=debug, forwards=forwards)
 end
+
+
+# evaluation via coroutines (useful for evaluating streams of
+# arbitrary length)
 
 function encrypt(state::State; debug=false, forwards=true)
     Task() do plain
@@ -65,6 +75,10 @@ function encrypt(state::State; debug=false, forwards=true)
             plain = produce2(cipher)
         end
     end
+end
+
+function encrypt(key::Array{Uint8}; debug=false, forwards=true)
+    encrypt(State(key), debug=debug, forwards=forwards)
 end
 
 function encrypt(state::State, plain::Task; debug=false, forwards=true)
@@ -80,16 +94,24 @@ function encrypt(key::Array{Uint8}, plain::Task; debug=false, forwards=true)
     encrypt(State(key), plain, debug=debug, forwards=forwards)
 end
 
-function encrypt(key::Array{Uint8}, plain::Array{Uint8};
-                 debug=false, forwards=true)
+
+# direct evaluation for known length text (more efficient)
+
+function encrypt(state::State, plain::Array{Uint8}; debug=false, forwards=true)
     cipher = Array(Uint8, length(plain))
-    state = State(key)
     for i = 1:length(plain)
         cipher[i] = encrypt(state, plain[i], debug=debug, forwards=forwards)
     end
     cipher
 end
 
+function encrypt(key::Array{Uint8}, plain::Array{Uint8};
+                 debug=false, forwards=true)
+    encrypt(State(key), debug=debug, forwards=forwards)
+end
+
+
+# utilities
 
 function to_hex(task::Task, n=-1)
     if n < 0
@@ -103,16 +125,17 @@ function to_hex(cipher::Array{Uint8})
     bytes2hex(cipher)
 end
 
-
 function random_key(key_length)
     collect2(Uint8, take(key_length, rands(Uint8)))
 end
 
 
+# tests
+
 function random_examples(key_length, plain, label)
     @printf("random_examples begin [%d %s]\n", key_length, label)
     plain_length = div(80 - 2 * key_length - 2, 2)
-    for i = 1:5
+    for i = 1:2
         key = random_key(key_length)
         cipher = to_hex(encrypt(key, plain), plain_length)
         @printf("%s: %s\n", to_hex(key), cipher)
@@ -199,6 +222,8 @@ function tests()
     test_roundtrip()
     random_examples(3, constant(0x0), "zeroes")
     random_examples(8, constant(0x0), "zeroes")
+    random_examples(3, counter(), "counter")
+    random_examples(8, counter(), "counter")
     random_examples(3, rands(Uint8), "random")
     random_examples(8, rands(Uint8), "random")
 end
