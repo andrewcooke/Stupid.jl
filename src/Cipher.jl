@@ -2,7 +2,7 @@
 module Cipher
 using Tasks2, Rand2
 
-export stupid, encrypt, to_hex, tests
+export State, encrypt, to_hex, tests
 
 
 type State
@@ -22,6 +22,9 @@ type State
             key[1] % key_length, key[2] % key_length, key[3] % key_length)
     end
 end
+
+State(key::ASCIIString) = State(hex2bytes(key))
+State(key::Task) = State(collect2(Uint8, key))
 
 function Base.println(state::State)
     @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
@@ -59,8 +62,6 @@ function encrypt(state::State, plain::Uint8; debug=false, forwards=true)
 end
 
 function encrypt(state::State, plain::Integer; debug=false, forwards=true)
-    # handle lazy code as long as it's inside bounds
-    @assert typemin(Uint8) <= plain <= typemax(Uint8)
     encrypt(state, convert(Uint8, plain), debug=debug, forwards=forwards)
 end
 
@@ -77,7 +78,7 @@ function encrypt(state::State; debug=false, forwards=true)
     end
 end
 
-function encrypt(key::Array{Uint8}; debug=false, forwards=true)
+function encrypt(key; debug=false, forwards=true)
     encrypt(State(key), debug=debug, forwards=forwards)
 end
 
@@ -90,7 +91,7 @@ function encrypt(state::State, plain::Task; debug=false, forwards=true)
     end
 end
 
-function encrypt(key::Array{Uint8}, plain::Task; debug=false, forwards=true)
+function encrypt(key, plain::Task; debug=false, forwards=true)
     encrypt(State(key), plain, debug=debug, forwards=forwards)
 end
 
@@ -105,8 +106,7 @@ function encrypt(state::State, plain::Array{Uint8}; debug=false, forwards=true)
     cipher
 end
 
-function encrypt(key::Array{Uint8}, plain::Array{Uint8};
-                 debug=false, forwards=true)
+function encrypt(key, plain::Array{Uint8}; debug=false, forwards=true)
     encrypt(State(key), plain, debug=debug, forwards=forwards)
 end
 
@@ -177,37 +177,33 @@ function test_vectors()
     # no test vectors are provided, so this is only an internal check
     # against bugs introduced later in the code
 
-    three_zeroes = hex2bytes("000000")
-    cipher = to_hex(encrypt(three_zeroes, constant(0x0)), 0x10)
+    cipher = to_hex(encrypt("000000", constant(0x0)), 0x10)
     @assert cipher == "00000102030405060708090a0b0c0d0e" cipher
-    cipher = to_hex(encrypt(three_zeroes, constant(0xff)), 0x10)
+    cipher = to_hex(encrypt("000000", constant(0xff)), 0x10)
     @assert cipher == "ff000102030405060708090a0b0c0d0e" cipher
-    cipher = to_hex(encrypt(three_zeroes, iterate(b"secret")))
+    cipher = to_hex(encrypt("000000", iterate(b"secret")))
     @assert cipher == "731607131415" cipher
-    cipher = to_hex(encrypt(three_zeroes, counter(0x0)), 0x10)
+    cipher = to_hex(encrypt("000000", counter()), 0x10)
     @assert cipher == "000102030405060708090a0b0c0d0e0f" cipher
 
     eight_zeroes = hex2bytes("0000000000000000")
     cipher = to_hex(encrypt(eight_zeroes, constant(0x0)), 0x10)
     @assert cipher == "00000102030405060708090a0b0c0d0e" cipher
 
-    one_two_three = hex2bytes("010203")
-    cipher = to_hex(encrypt(one_two_three, constant(0x0)), 0x10)
+    cipher = to_hex(encrypt("010203", constant(0x0)), 0x10)
     @assert cipher == "0201024343c465873710c9066b0a3d16" cipher
-    cipher = to_hex(encrypt(one_two_three, iterate(b"secret")))
+    cipher = to_hex(encrypt("010203", b"secret"))
     @assert cipher == "71170492a494" cipher
-    cipher = to_hex(encrypt(one_two_three, counter(0x0)), 0x10)
+    cipher = to_hex(encrypt("010203", counter()), 0x10)
     @assert cipher == "0200010284a4962fa835fac71d1c2cc3" cipher
 
     println("test_vectors ok")
 end
 
 function test_roundtrip()
-    key = hex2bytes("010203")
+    key = "010203"
     plain = collect2(Uint8, 
-                     encrypt(key, 
-                             encrypt(key, iterate(b"secret")), 
-                             forwards=false))
+                     encrypt(key, encrypt(key, b"secret"), forwards=false))
     @assert plain == b"secret" plain
     println("test_roundtrip ok")
 end

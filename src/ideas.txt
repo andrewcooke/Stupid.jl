@@ -58,3 +58,5 @@
 - what's the distance between the same text with different keys?
   maybe it's less than expected because self-encrypting dominates the
   key after some time?
+
+- distinguishing attacks are a thing, so do stats.

@@ -72,7 +72,7 @@ end
 
 function tests()
     println("KeyDistance")
-    plot_distances(100)
+    #plot_distances(100)
 end
 
 end
