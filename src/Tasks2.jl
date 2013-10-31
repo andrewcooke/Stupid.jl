@@ -90,7 +90,7 @@ end
 function counter(start=0)
     repeat() do
         save = start
-        start = start + 1
+        start = start + 0x1
         save
     end
 end

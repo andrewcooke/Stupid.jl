@@ -1,13 +1,14 @@
 # Stupid
 
-Analysis of the "stupid" cipher at http://news.quelsolaar.com/#comments101
+Analysis of an 8-bit version of the "stupid" cipher at
+http://news.quelsolaar.com/#comments101
 
 ## Introduction
 
 **Motivation** - it seems that the only way to learn about
 implementing ciphers is to break them.  At the same time, the ciphers
-that I know are ridiculously hard to break.  So breaking an "obviously
-bad" design might be a good first step.
+that I know are ridiculously hard to break.  So breaking a "known bad"
+design might be a good first step.
 
 **Structure** - this page contains only a basic summary of the code
 and results.  There are links to source files, which contain more

@@ -5,78 +5,93 @@ using Tasks2, Rand2
 export stupid, encrypt, to_hex, tests
 
 
-function stupid(key::Vector{Uint8}; debug=false, forwards=true)
+type State
+    key_length::Int
+    key::Array{Uint8}  # mutated
+    count::Uint8
+    pos_a::Int
+    pos_b::Int
+    pos_c::Int
 
-    # this is a generator so that we can do pipelined analysis without
-    # creating large intermediate files (and i found it generally useful
-    # to use generators while working on the crypto challenge in python,
-    # so wanted to explore the same ideas here).
+    function State(key::Array{Uint8})
+        key_length = length(key)
+        @assert key_length >= 3
+        new(key_length, copy(key), 0x0, 
+            key[1] % key_length, key[2] % key_length, key[3] % key_length)
+    end
+end
 
-    key = copy(key)  # don't mutate the passed key
-    key_length = length(key)
-    @assert key_length >= 3
+function Base.println(state::State)
+    @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
+            state.count, bytes2hex(state.key), 
+            state.pos_a, state.key[state.pos_a+1], 
+            state.pos_b, state.key[state.pos_b+1], 
+            state.pos_c, state.key[state.pos_c+1])
+end
 
-    pos_a = key[1] % key_length
-    pos_b = key[2] % key_length
-    pos_c = key[3] % key_length
-    count::Uint8 = 0
+function encrypt(state::State, plain::Uint8; debug=false, forwards=true)    
 
-    function task(plain::Uint8)
+    if debug
+        println(state)
+    end
 
-        # the original isn't clear on the size of the keys (in fact,
-        # it mentions 32bits at one point).  here i've gone with what
-        # seems more normal - encrypting a stream of bytes with keys
-        # in bytes.
+    old_a = state.pos_a
+    state.pos_a = state.key[state.pos_b+1] % state.key_length
+    state.pos_b = (state.pos_a + 1 + 
+                   state.key[state.pos_c+1] % (state.key_length - 1)
+                   ) % state.key_length
+    state.pos_c = (state.pos_a + 1 + 
+                   state.key[old_a+1] % (state.key_length - 1)
+                   ) % state.key_length
+    cipher::Uint8 = plain $ state.key[state.pos_a+1] $ state.key[state.pos_b+1]
+    poison = forwards ? cipher : plain
+    state.key[state.pos_c+1] = (state.key[state.pos_c+1] << 7 | 
+                                state.key[state.pos_c+1] >> 1)
+    state.key[state.pos_a+1] = (state.key[state.pos_a+1] $ 
+                                state.key[state.pos_c+1] $ 
+                                state.count $ poison)
+    state.count = state.count + 1
+    cipher
+end
 
-        # the original had the encrypted text named as "decrypted" and
-        # vice versa.  i don't know if that was a language mistake, or
-        # something deeper.  it may mean that the "poison" is
-        # incorrect below.
+function encrypt(state::State, plain::Integer; debug=false, forwards=true)
+    encrypt(state, convert(Uint8, plain), debug=debug, forwards=forwards)
+end
 
-        # it's unclear to me why (key_length - 1) is used, but that's
-        # verbatim.
-
-        # julia uses 1-based indexing, hence the "pos_X+1" eveywhere.
-        # i think that keeps the semantics equivalent (no test
-        # vectors).
-
+function encrypt(state::State; debug=false, forwards=true)
+    Task() do plain
         while true
-            if debug
-                @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
-                        count, bytes2hex(key), pos_a, key[pos_a+1], 
-                        pos_b, key[pos_b+1], pos_c, key[pos_c+1])
-            end
-            old_a = pos_a
-            pos_a = key[pos_b+1] % key_length
-            pos_b = (pos_a + 1 + key[pos_c+1] % (key_length - 1)) % key_length
-            pos_c = (pos_a + 1 + key[old_a+1] % (key_length - 1)) % key_length
-            cipher::Uint8 = plain $ key[pos_a+1] $ key[pos_b+1]
-            poison = forwards ? cipher : plain
+            cipher = encrypt(state, plain, debug=debug, forwards=forwards)
             plain = produce2(cipher)
-            key[pos_c+1] = (key[pos_c+1] << 31) | (key[pos_c+1] >> 1)
-            key[pos_a+1] = key[pos_a+1] $ key[pos_c+1] $ count $ poison
-            count = count + 1
-        end
-
-    end
-
-    Task(task)
-end
-
-function encrypt(key, text; debug=false, forwards=true)
-    
-    s = stupid(key, debug=debug, forwards=forwards)
-
-    function task()
-        for c in text
-            produce2(consume2(s, c))
         end
     end
-
-    Task(task)
 end
-    
-function to_hex(task, n=-1)
+
+function encrypt(state::State, plain::Task; debug=false, forwards=true)
+    task = encrypt(state, debug=debug, forwards=forwards)
+    Task() do 
+        for c in plain
+            produce2(consume2(task, c))
+        end
+    end
+end
+
+function encrypt(key::Array{Uint8}, plain::Task; debug=false, forwards=true)
+    encrypt(State(key), plain, debug=debug, forwards=forwards)
+end
+
+function encrypt(key::Array{Uint8}, plain::Array{Uint8};
+                 debug=false, forwards=true)
+    cipher = Array(Uint8, length(plain))
+    state = State(key)
+    for i = 1:length(plain)
+        cipher[i] = encrypt(state, plain[i], debug=debug, forwards=forwards)
+    end
+    cipher
+end
+
+
+function to_hex(task::Task, n=-1)
     if n < 0
         bytes2hex(collect2(Uint8, task))
     else
@@ -84,16 +99,54 @@ function to_hex(task, n=-1)
     end
 end
 
+function to_hex(cipher::Array{Uint8})
+    bytes2hex(cipher)
+end
+
+
+function random_key(key_length)
+    collect2(Uint8, take(key_length, rands(Uint8)))
+end
+
 
 function random_examples(key_length, plain, label)
     @printf("random_examples begin [%d %s]\n", key_length, label)
     plain_length = div(80 - 2 * key_length - 2, 2)
     for i = 1:5
-        key = collect2(Uint8, take(key_length, rands(Uint8)))
+        key = random_key(key_length)
         cipher = to_hex(encrypt(key, plain), plain_length)
-        @printf("%s: %s\n", bytes2hex(key), cipher)
+        @printf("%s: %s\n", to_hex(key), cipher)
     end
     println("random_examples end")
+end
+
+function test_state()
+    state = State(hex2bytes("010203"))
+    @assert state.key_length == 3
+    @assert state.key == Uint8[0x1, 0x2, 0x3]
+    @assert state.pos_a == 0x1
+    @assert state.pos_b == 0x2
+    @assert state.pos_c == 0x0  # wrapped
+    @assert state.count == 0
+    println("test_state ok")
+end
+
+function test_encrypt()
+    state = State(hex2bytes("010203"))
+    cipher = encrypt(state, 0x0, debug=true)
+    @assert cipher == 0x2 cipher
+    @assert state.count == 1
+
+    task = encrypt(state, debug=true)
+    cipher = consume2(task, 0x0)
+    @assert cipher == 0x1 cipher
+    @assert state.count == 2
+
+    cipher = to_hex(encrypt(state, constant(0x0), debug=true), 2)
+    @assert cipher == "0243" cipher
+    @assert state.count == 4 state.count
+
+    println("test_encrypt ok")
 end
 
 function test_vectors()
@@ -119,11 +172,11 @@ function test_vectors()
 
     one_two_three = hex2bytes("010203")
     cipher = to_hex(encrypt(one_two_three, constant(0x0)), 0x10)
-    @assert cipher == "02010202030404060708090a0b0c0d0e" cipher
+    @assert cipher == "0201024343c465873710c9066b0a3d16" cipher
     cipher = to_hex(encrypt(one_two_three, iterate(b"secret")))
-    @assert cipher == "711704136263" cipher
+    @assert cipher == "71170492a494" cipher
     cipher = to_hex(encrypt(one_two_three, counter(0x0)), 0x10)
-    @assert cipher == "020001030505060708090a0b0c0d0e0f" cipher
+    @assert cipher == "0200010284a4962fa835fac71d1c2cc3" cipher
 
     println("test_vectors ok")
 end
@@ -140,6 +193,8 @@ end
 
 function tests()
     println("Cipher")
+    test_state()
+    test_encrypt()
     test_vectors()
     test_roundtrip()
     random_examples(3, constant(0x0), "zeroes")
