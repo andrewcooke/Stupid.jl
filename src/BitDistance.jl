@@ -115,13 +115,6 @@ function plot_distances(n)
     println("plot_distances end")
 end
 
-function examine_state()
-    println("examine_state begin")
-    collect(take(128, encrypt(hex2bytes("fa3178ac9713e650"), counter(0x0), 
-                              debug=true)))
-    println("examine_state end")
-end
-
 function test_distance()
     d = bit_distance(hex2bytes("10001f"), hex2bytes("300005"))
     @assert d == 4
@@ -131,8 +124,7 @@ end
 function tests()
     println("BitDistance")
     test_distance()
-    plot_distances(100)
-    examine_state()
+#    plot_distances(100)
 end
 
 end

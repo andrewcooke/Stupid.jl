@@ -18,11 +18,3 @@ information in the comments.
 (or close) with the flexibility of Python and has ambitions to replace
 statistical analysis packages like R.
 
-## Results
-
-So far the only strong result I have is that a chosen plaintext can
-erase the PRNG state.  See the comments in
-[BitDistance.jl](src/BitDistance.jl) for more details.
-
-While this illustrates the weakness of the PRNG construction, it does
-not lead to an attack, since the key data are not exposed.
