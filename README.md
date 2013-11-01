@@ -56,7 +56,7 @@ The analysis can be seen in [Prefix.jl](src/Prefix.jl).
 
 ## Copyright
 
-Code copyright [Andrew Cooke](mailt:andrew@acooke.org) 2013, licensed
+Code copyright [Andrew Cooke](mailto:andrew@acooke.org) 2013, licensed
 under the [GPLv3](LICENSE.md).
 
 [Little Brother](little-brother.txt) copyright [Cory
