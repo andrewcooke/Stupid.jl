@@ -23,7 +23,7 @@ statistical analysis packages like R.
 In some cases, injecting a pre-calculated fragment in the plaintext
 can force the internal state of the cipher to a known point (excluding
 the internal counter, which is known anyway).  Following text can then
-be decypted easily.
+be decypted directly.
 
 A practical example might be the encryption of a web page that
 displays user-supplied data (like a name or comment).
