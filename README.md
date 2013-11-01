@@ -1,7 +1,8 @@
 # 8 bit Stupid
 
-Analysis of an 8 bit version of the "stupid" cipher at
-http://news.quelsolaar.com/#comments101 .
+Analysis of an 8 bit version of the ["stupid"
+cipher](http://news.quelsolaar.com/#comments101) as discussed on
+[HN](https://news.ycombinator.com/item?id=6616438).
 
 The cipher implementation can be seen in [Cipher.jl](src/Cipher.jl).
 
@@ -19,6 +20,10 @@ information in the comments.
 **Language** - [Julia](http://julialang.org/) combines the speed of C
 (or close) with the flexibility of Python and has ambitions to replace
 statistical analysis packages like R.
+
+**Why 8 bit?** - other stream ciphers (like Stupid) work with 8 bit
+"characters".  So I can re-use any tools I develop.  In some ways it
+may also simplify analysis.
 
 ## Plaintext Injection Attack
 
