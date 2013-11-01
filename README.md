@@ -25,8 +25,8 @@ can force the internal state of the cipher to a known point (excluding
 the internal counter, which is known anyway).  Following text can then
 be decypted directly.
 
-A practical example might be the encryption of a web page that
-displays user-supplied data (like a name or comment).
+A practical example is the encryption of a web page that displays
+user-supplied data (like a name or comment).
 
 The fragment is a counter (modulo 0xff) that mirrors the counter in
 the cipher state.
