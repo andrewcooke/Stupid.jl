@@ -38,3 +38,4 @@ fragments.
 Even when a unique state is not achieved, counter fragments can
 significantly reduce the cipher state.
 
+The analysis can be seen in [Partial.jl](src/Partial.jl).
