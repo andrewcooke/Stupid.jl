@@ -60,6 +60,6 @@ Code copyright [Andrew Cooke](mailt:andrew@acooke.org) 2013, licensed
 under the [GPLv3](LICENSE.md).
 
 [Little Brother](little-brother.txt) copyright [Cory
-Doctorow](doctorow@craphound.com), licensed under CC ANCS3 (see file)
-(it's used as example English text for analysis, but it's actually a
-great read - probably more interesting than this project).
+Doctorow](mailto:doctorow@craphound.com), licensed under CC ANCS3 (see
+file) (it's used as example English text for analysis, but it's
+actually a great read - probably more interesting than this project).
