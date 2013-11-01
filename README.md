@@ -1,4 +1,4 @@
-# 8 bit Stupid
+# 8 Bit Stupid
 
 Analysis of an 8 bit version of the ["stupid"
 cipher](http://news.quelsolaar.com/#comments101) as discussed on
