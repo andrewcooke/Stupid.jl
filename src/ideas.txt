@@ -1,27 +1,35 @@
 
+ADDRESSED
+
 - similar keys (bit distance?) give similar encryptions.  use this to
   hunt for keys.  genetic?
-
-- is output similar to text?  measure bit distance letter by letter.
-  look at whether there is a lag (cross-correlation).
 
 - plaintext that goes 0,1,2,3... will xor count (state constantly zero
   if key also zero).
 
-- eight bit shows state directly.
+- if you look at the text vectors, constant values encrypt to the same
+  value, except for a prefix.  how general is this?  is the encryption
+  some kind of differential?  what does that mean?  [it was a bug]
 
-- since plaintext has patterns, and plaintext critical for randomness, 
-  ordinary text will not be random when encrypted.
+- the example ciphers show very little variation even with very
+  different keys.  why [it was a bug]?  how to exploit this?
+
+- can we poison the state with a counter prefix, then extract the state,
+  then continue?
+
+
+PARTIALLY ADDRESSED 
+
+- can we construct state / keys from known plaintext (all zeroes)?
 
 - does state repeat too quickly?  what about with text?
 
+
+NOT ADDRESSED
+
+- eight bit shows state directly.
+
 - early cipher only depends on part of key?  incremental crack?
-
-- if you look at the text vectors, constant values encrypt to the same
-  value, except for a prefix.  how general is this?  is the encryption
-  some kind of differential?  what does that mean?
-
-- can we construct state / keys from known plaintext (all zeroes)?
 
 - maybe set up a sat solver?! (poc using text; if it works, wrap).
 
@@ -34,29 +42,61 @@
 
 - quantify how things (don't) scale with keysize.
 
-- what happens if you xor ciphertext with the same plaintext encrypted
-  with an empty key?  what happens if you xor ciphertext with empty
-  plaintext and the same key?  what happens if you xor ciphertext with
-  a counter?
-
 - for large, random keys, and constant plaintext, what structure do we
   see?  are different keys similar in some way?  what happens when the
-  plaintext has structrue too?  are there correlations at 256 bytes
+  plaintext has structure too?  are there correlations at 256 bytes
   (counter looping)?
 
-- the example ciphers show very little variation even with very
-  different keys.  why (it was a bug!)?  how to exploit this?
+
+- since plaintext has patterns, and plaintext critical for randomness, 
+  ordinary text will not be random when encrypted.
+
+- building statistics for the cipher is tricky because output depends
+  on the plaintext.  we could use the following plaintexts:
+  - constant value (0x0, 0xff or 0x55)
+  - random values
+  - pair-repeated random values from the lower 4 bits
+  - a known text file
+  and use the NIST suite of tests.  but we can likely already guess
+  that only random input will look random.
+
+- statistics of the ciphertext xored with the plaintext are more
+  interesting, because that is showing the "effective prng" for a
+  classical stream cipher.  we can see how that varies with different
+  plaintexts and keys.
+
+- measure diffusion(?) - change a bit in the key and see how the
+  ciphertext changes.
+
+
+- encrypt the same text many times using different keys.  can we
+  combine the encrypted streams in a way that reveals the text?  in
+  other words, if the underlying generator is not random then the xor
+  between two ciphertexts will show... what?  what statistic would
+  suggest that this is a good idea? 
+
+- more interesting are relationships between the ciphertext and either
+  the plaintext or the input keys.  for example:
+  - when the same plaintext is encrypted by multiple keys, can we
+    detect any similarity in the ciphertexts?
+  - do those ciphertexts tend to converge (as key state is replaced by
+    state from the plaintext)?
 
 - it seems like state from the key "dies out" over time (counter and
   zero plaintexts).  if so, then maybe long text tends to the same
   "self-encryted" value, no matter what the key.  if so, then we can
   look for patterns related to common fragments.
 
-- can we poison the state with a counter prefix, then extract the state,
-  then continue?
+- is output similar to text?  measure bit distance letter by letter.
+  look at whether there is a lag (cross-correlation).
 
 - what's the distance between the same text with different keys?
   maybe it's less than expected because self-encrypting dominates the
   key after some time?
 
+
 - distinguishing attacks are a thing, so do stats.
+
+- can we see the counter in the output?  if we encrypt text (ie not
+  random), can we seen the signature of the counter xored with the
+  output?  a distinguishing attack.
