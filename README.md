@@ -48,7 +48,7 @@ percentage.
 Even when the known unique state is not achieved (including larger key
 sizes), counter fragments *significantly* reduce the cipher state.  In
 a random sample (size 100) of 8 byte keys encrypting a counter all had
-state (excluding the internal counter) that repeated over unexpected
+state (excluding the internal counter) that repeated over unexpectedly
 short periods.  The largest period was 319 and 43% achieved stationary
 state (period 1) after 1500 characters or less.
 
