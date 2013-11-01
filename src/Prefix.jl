@@ -12,7 +12,7 @@ export tests
 # first, see what the effect of the counter on state is by measuring
 # the distance to repeated state with the counter plaintext.
 
-function run_to_repeat(s, c, t; hash=hash)
+function run_to_repeat(s, c, t; hash=Base.hash)
     n = 0
     known = Set()
     while true
@@ -26,7 +26,7 @@ function run_to_repeat(s, c, t; hash=hash)
     end
 end
 
-function loop_stats(key, plain; debug=false, hash=hash)
+function loop_stats(key, plain; debug=false, hash=Base.hash)
     s = State(key)
     t = encrypt(s, plain, debug=debug)
     n1 = run_to_repeat(s, plain, t, hash=hash)
@@ -80,13 +80,16 @@ end
 
 function no_count_distribution(key_length)
     println("no_count_distribution begin")
-    min, delay, count, n = 1e9, 0, 0, 0
+    mn, mx, delay, count, n = 1e9, 0, 0, 0, 0
     for i = 1:100
         n1, n2, s = loop_stats(take(key_length, rands(Uint8)), 
                                counter(), hash=no_count_hash)
-        if n2 < min
-            min, delay, count = n2, n1, 0
-        elseif n2 == min
+        if n2 > mx
+            mx = n2
+        end
+        if n2 < mn
+            mn, delay, count = n2, n1, 0
+        elseif n2 == mn
             count = count + 1
             delay = max(delay, n1)
         end
@@ -94,8 +97,8 @@ function no_count_distribution(key_length)
             println(s)
         end
     end
-    @printf("key length %d; smallest loop is %d (after max delay %d); occurs %d%% of the time\n",
-            key_length, min, delay, count)
+    @printf("key length %d; smallest loop is %d (after max delay %d); occurs %d%% of the time; max loop %d\n",
+            key_length, mn, delay, count, mx)
     println("no_count_distribution end")    
 end
 
@@ -172,7 +175,7 @@ function tests()
 #    no_count_stats()
 #    no_count_distribution(3)
 #    no_count_distribution(4)
-#    no_count_distribution(8)
+    no_count_distribution(8)
 #    zero_counts()
 end
 
