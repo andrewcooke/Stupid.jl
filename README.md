@@ -22,10 +22,11 @@ information in the comments.
 statistical analysis packages like R.
 
 **Why 8 bit?** - other stream ciphers (like Stupid) work with 8 bit
-"characters", so I can re-use any tools I develop.  In some ways it
-may also simplify analysis (less state for a given key size).
-Remember that my aim is to learn about cipher analysis, not to "fix"
-anyone's code.
+characters, so I can re-use any tools I develop.  In some ways it may
+also simplify analysis (less state for a given key size, but for a
+given sized state, less information is exposed when a character is
+encrypted).  Remember that my aim is to learn about cipher analysis,
+not to "fix" anyone's code.
 
 ## Plaintext Injection Attack
 
