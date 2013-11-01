@@ -32,10 +32,9 @@ the cipher state.
 
 For 3 byte keys, a 32 byte fragment affects 4% of keys.  For 4 byte
 keys a longer fragment (120 bytes) is necessary to affect a similar
-percentage.  Only 1 % of 8 byte keys are affected with 800 byte
-fragments.
+percentage.
 
-Even when a unique state is not achieved, counter fragments can
-significantly reduce the cipher state.
+Even when a unique state is not achieved (including larger key sizes),
+counter fragments can significantly reduce the cipher state.
 
 The analysis can be seen in [Prefix.jl](src/Prefix.jl).
