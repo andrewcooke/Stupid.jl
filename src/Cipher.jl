@@ -8,12 +8,12 @@ export State, encrypt, to_hex, tests
 type State
     # make persistent across calls so that we can examine and modify
     # at will
-    key_length::Int
+    key_length::Uint8
     key::Array{Uint8}  # mutated
     count::Uint8
-    pos_a::Int
-    pos_b::Int
-    pos_c::Int
+    pos_a::Uint8
+    pos_b::Uint8
+    pos_c::Uint8
 
     function State(key::Array{Uint8})
         key_length = length(key)
@@ -26,6 +26,38 @@ end
 State(key::ASCIIString) = State(hex2bytes(key))
 State(key::Task) = State(collect2(Uint8, key))
 
+function small_hash(s)
+    h::Int64 = s.key_length
+    h = h << 8 | s.count
+    h = h << 8 | s.pos_a
+    h = h << 8 | s.pos_b
+    h = h << 8 | s.pos_c
+    for i = 1:s.key_length
+        h = h << 8 | s.key[i]
+    end
+    h
+end
+
+function large_hash(s)
+    h::Int64 = s.key_length
+    h = h << 5 $ s.count
+    h = h << 5 $ s.pos_a
+    h = h << 5 $ s.pos_b
+    h = h << 5 $ s.pos_c
+    for i = 1:s.key_length
+        h = (h << 5 | h >> 59) $ s.key[i]
+    end
+    h
+end
+
+Base.hash(s::State) = s.key_length > 4 ? large_hash(s) : small_hash(s)
+Base.isequal(x::State, y::State) = (x.key_length == y.key_length &&
+                                    x.count == y.count &&
+                                    x.pos_a == y.pos_a &&
+                                    x.pos_b == y.pos_b &&
+                                    x.pos_c == y.pos_c &&
+                                    x.key == y.key)
+
 function Base.println(state::State)
     @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
             state.count, bytes2hex(state.key), 
@@ -36,6 +68,22 @@ end
 
 
 # single step evaluation
+
+# this differs from http://news.quelsolaar.com/#comments101 in a
+# couple of ways.
+
+# first, it's all 8bit.  the original rotation was 32bit, which was
+# also mentioned in the comments, yet that was used to modify a single
+# input value.  since most stream ciphers work with 8bit "characters"
+# it seemed more consistent (and makes my code more general for use
+# with other ciphers) to stay with 8 bits.  this does reduce the
+# amount of state available, which may be an issue.
+
+# second, the original code has input labelled "encrypted" and output
+# labelled "decrypted".  i think the logic below is equivalent (it
+# would make no difference if it were a pure xor-based stream, but
+# there's the additional wrinkle of the text being folded into the
+# state).
 
 function encrypt(state::State, plain::Uint8; debug=false, forwards=true)    
     if debug
