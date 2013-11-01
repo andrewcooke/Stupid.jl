@@ -53,3 +53,13 @@ short periods.  The largest period was 319 and 43% achieved stationary
 state (period 1) after 1500 characters or less.
 
 The analysis can be seen in [Prefix.jl](src/Prefix.jl).
+
+## Copyright
+
+Code copyright [Andrew Cooke](mailt:andrew@acooke.org) 2013, licensed
+under the [GPLv3](LICENSE.md).
+
+[Little Brother](little_brother.txt) copyright [Cory
+Doctorow](doctorow@craphound.com), licensed under CC ANCS3 (see file)
+(it's used as example English text for analysis, but it's actually a
+great read - probably more interesting than this project).

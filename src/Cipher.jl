@@ -26,31 +26,21 @@ end
 State(key::ASCIIString) = State(hex2bytes(key))
 State(key::Task) = State(collect2(Uint8, key))
 
-function small_hash(s)
+function hash_by(s, n)
     h::Int64 = s.key_length
-    h = h << 8 | s.count
-    h = h << 8 | s.pos_a
-    h = h << 8 | s.pos_b
-    h = h << 8 | s.pos_c
+    h = h << n $ s.count
+    h = h << n $ s.pos_a
+    h = h << n $ s.pos_b
+    h = h << n $ s.pos_c
     for i = 1:s.key_length
-        h = h << 8 | s.key[i]
+        h = (h << n | h >> (64-n)) $ s.key[i]
     end
     h
 end
 
-function large_hash(s)
-    h::Int64 = s.key_length
-    h = h << 5 $ s.count
-    h = h << 5 $ s.pos_a
-    h = h << 5 $ s.pos_b
-    h = h << 5 $ s.pos_c
-    for i = 1:s.key_length
-        h = (h << 5 | h >> 59) $ s.key[i]
-    end
-    h
-end
+# for 3 byte keys we can store the entire state losslessly in the hash
+Base.hash(s::State) = s.key_length > 3 ? hash_by(s, 7) : hash_by(s, 8)
 
-Base.hash(s::State) = s.key_length > 4 ? large_hash(s) : small_hash(s)
 Base.isequal(x::State, y::State) = (x.key_length == y.key_length &&
                                     x.count == y.count &&
                                     x.pos_a == y.pos_a &&
