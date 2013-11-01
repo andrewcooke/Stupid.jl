@@ -1,7 +1,9 @@
 # Stupid
 
 Analysis of an 8-bit version of the "stupid" cipher at
-http://news.quelsolaar.com/#comments101
+http://news.quelsolaar.com/#comments101 .
+
+The cipher implementation can be seen in [Cipher.jl](src/Cipher.jl).
 
 ## Introduction
 
