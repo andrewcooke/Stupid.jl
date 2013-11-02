@@ -17,15 +17,24 @@ ADDRESSED
 - can we poison the state with a counter prefix, then extract the state,
   then continue?
 
+- it seems like state from the key "dies out" over time (counter and
+  zero plaintexts).  if so, then maybe long text tends to the same
+  "self-encryted" value, no matter what the key.  if so, then we can
+  look for patterns related to common fragments.
+
 
 PARTIALLY ADDRESSED 
 
-- can we construct state / keys from known plaintext (all zeroes)?
-
 - does state repeat too quickly?  what about with text?
+
+- what's the distance between the same text with different keys?
+  maybe it's less than expected because self-encrypting dominates the
+  key after some time?
 
 
 NOT ADDRESSED
+
+- can we construct state / keys from known plaintext (all zeroes)?
 
 - eight bit shows state directly.
 
@@ -37,16 +46,17 @@ NOT ADDRESSED
   guess.  how does that reduce the search space?  maybe with a reduced
   alphabet?
 
+
 - measure how long it takes to change key by position.  how variable
   it is.
 
 - quantify how things (don't) scale with keysize.
 
+
 - for large, random keys, and constant plaintext, what structure do we
   see?  are different keys similar in some way?  what happens when the
   plaintext has structure too?  are there correlations at 256 bytes
   (counter looping)?
-
 
 - since plaintext has patterns, and plaintext critical for randomness, 
   ordinary text will not be random when encrypted.
@@ -82,17 +92,8 @@ NOT ADDRESSED
   - do those ciphertexts tend to converge (as key state is replaced by
     state from the plaintext)?
 
-- it seems like state from the key "dies out" over time (counter and
-  zero plaintexts).  if so, then maybe long text tends to the same
-  "self-encryted" value, no matter what the key.  if so, then we can
-  look for patterns related to common fragments.
-
 - is output similar to text?  measure bit distance letter by letter.
   look at whether there is a lag (cross-correlation).
-
-- what's the distance between the same text with different keys?
-  maybe it's less than expected because self-encrypting dominates the
-  key after some time?
 
 
 - distinguishing attacks are a thing, so do stats.

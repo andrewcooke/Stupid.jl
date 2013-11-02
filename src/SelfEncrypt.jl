@@ -36,15 +36,18 @@ function count_files(n, key_length)
         push!(results, tail, result)
         push!(result, key)
     end
+    singles = 0
     for key in keys(results)
-        @printf("%s: %d\n", to_hex(key), length(get(results, key, [])))
+        count = length(get(results, key, []))
+        @printf("%s: %d\n", to_hex(key), count)
+        singles = singles + (count == 1 ? 1 : 0)
     end
-    @printf("%d/%d\n", length(results), n)
+    @printf("%d/%d (%d single)\n", length(results), n, singles)
     println("count_files end")
 end
 
-# shows that 100 keys (3 bytes) give 82 results.  that's not good, but
-# it suggests we're unlikely to find many sub-matches (since
+# shows that 100 keys (3 bytes) give ~80 results.  that's not good,
+# but it suggests we're unlikely to find many sub-matches (since
 # synchronisation with the plaintext is weak).
 
 
@@ -52,7 +55,7 @@ function tests()
     println("SelfEncrypt")
 #    show_files(10, 3)
 #    show_files(10, 8)
-#    count_files(100, 3)  # 82
+    count_files(100, 3)  # 85/100 (72 single)
 #    count_files(100, 8)  # 100
 end
 

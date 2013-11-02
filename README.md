@@ -57,7 +57,7 @@ The analysis can be seen in [Prefix.jl](src/Prefix.jl).
 ## Ciphertext Collisions
 
 When [Little Brother](little-brother.txt) is encrypted with 100
-distinct, random keys, of length 3 bytes, the endings of 20% of the
+distinct, random keys, of length 3 bytes, the endings of ~30% of the
 files are not unique.
 
 The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
