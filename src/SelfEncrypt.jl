@@ -52,7 +52,7 @@ function tests()
     println("SelfEncrypt")
 #    show_files(10, 3)
 #    show_files(10, 8)
-#    count_files(100, 3)  # 83
+#    count_files(100, 3)  # 82
 #    count_files(100, 8)  # 100
 end
 
