@@ -74,7 +74,7 @@ encrypted with key 0xacb89d:
 
 ![correlation for 3 byte key](bit-correlation-3-acb89d.png)
 
-The analysis can be seen in [Prefix.jl](src/Prefix.jl).
+The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
 
 ## Copyright
 
