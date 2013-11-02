@@ -64,7 +64,7 @@ The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
 ## Distinguishing Attack
 
-Cipher text bitwise cross-correlated with a counter (modulo 0xff)
+Ciphertext bitwise cross-correlated with a counter (modulo 0xff)
 shows clear structure for 3 byte keys.  Typically a peak or trough at
 ~0 offset with other features at 64 and 128 bytes offset.  The same
 structure also appears to be visible (varying by key; statistical
