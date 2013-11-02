@@ -60,6 +60,9 @@ When [Little Brother](little-brother.txt) is encrypted with 100
 distinct, random keys, of length 3 bytes, the endings of ~30% of the
 files are not unique.
 
+A pactical example is disk encryption, where the same file can be
+identified for multiple users.
+
 The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
 ## Distinguishing Attack
@@ -69,6 +72,9 @@ clear structure for 3 byte keys.  Typically a peak or trough at ~0
 offset with other features at 64 and 128 bytes offset.  Similar
 structures also appears to be visible (varying by key; statistical
 significance unclear) with 8 byte keys.
+
+A practical example is detecting the use of this (weak) cipher in data
+of unknown origin.
 
 Here is the correlation for [Little Brother](little-brother.txt),
 encrypted with key 0xacb89d:
