@@ -48,12 +48,12 @@ Base.isequal(x::State, y::State) = (x.key_length == y.key_length &&
                                     x.pos_c == y.pos_c &&
                                     x.key == y.key)
 
-function Base.println(state::State)
-    @printf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
-            state.count, bytes2hex(state.key), 
-            state.pos_a, state.key[state.pos_a+1], 
-            state.pos_b, state.key[state.pos_b+1], 
-            state.pos_c, state.key[state.pos_c+1])
+function Base.show(io::IO, state::State)
+    show(io, @sprintf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
+                      state.count, bytes2hex(state.key), 
+                      state.pos_a, state.key[state.pos_a+1], 
+                      state.pos_b, state.key[state.pos_b+1], 
+                      state.pos_c, state.key[state.pos_c+1]))
 end
 
 

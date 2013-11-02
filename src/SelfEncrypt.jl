@@ -1,6 +1,6 @@
 
 module SelfEncrypt
-using Cipher, Tasks2, Rand2
+using Cipher, Tasks2, Rand2, LittleBrother
 
 export tests
 
@@ -9,15 +9,6 @@ export tests
 # plaintext tend towards a single limit.
 
 # measure that limit for "real" text (little brother).
-
-function encrypt_file(key_length)
-    plain = open(readbytes, "../little-brother.txt")
-    repeat() do
-        key = collect2(Uint8, take(key_length, rands(Uint8)))
-        cipher = encrypt(key, plain)
-        key, cipher
-    end
-end
 
 function show_files(n, key_length) 
     @printf("show_files begin [%d]\n", key_length)
@@ -55,7 +46,7 @@ function tests()
     println("SelfEncrypt")
 #    show_files(10, 3)
 #    show_files(10, 8)
-    count_files(100, 3)  # 85/100 (72 single)
+#    count_files(100, 3)  # 85/100 (72 single)
 #    count_files(100, 8)  # 100
 end
 

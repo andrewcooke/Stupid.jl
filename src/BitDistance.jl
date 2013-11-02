@@ -2,7 +2,7 @@
 module BitDistance
 using Cipher, Tasks2, Rand2
 
-export bit_distance, change_random_bits
+export bit_distance, change_random_bits, BITS
 
 
 function count_bits(n::Uint8)
@@ -17,7 +17,7 @@ function count_bits(n::Uint8)
     count
 end
 
-BITS = Uint[count_bits(n) for n = typemin(Uint8):typemax(Uint8)]
+const BITS = Uint8[count_bits(n) for n = typemin(Uint8):typemax(Uint8)]
 
 function bit_distance(a::Array{Uint8}, b::Array{Uint8})
     distance = 0

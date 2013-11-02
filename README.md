@@ -62,6 +62,18 @@ files are not unique.
 
 The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
+## Distinguishing Attack
+
+Cipher text bitwise cross-correlated with a counter shows structure
+for 3 byte keys.  Typically a peak or trough at ~0 offset with other
+features at 64 and 128 bytes offset.  The same structure also appears
+to be visible in 8 byte keys.
+
+Here is the correlation for [Little Brother](little-brother.txt)
+wncrypted with key 0xacb89d:
+
+![correlation for 3 byte key](bit-correlation-3-acb89d.png)
+
 ## Copyright
 
 Code copyright [Andrew Cooke](mailto:andrew@acooke.org) 2013, licensed
