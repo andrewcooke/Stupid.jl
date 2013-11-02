@@ -5,8 +5,8 @@ using Cipher, Tasks2, Rand2
 export tests
 
 # the idea here is that after some time state from the plaintext comes
-# to dominate the initial key state.  so all ciphertexts for the same
-# plaintext should tend towards a single limit.
+# to dominate the initial key state.  so ciphertexts for the same
+# plaintext tend towards a single limit.
 
 # measure that limit for "real" text (little brother).
 
@@ -43,8 +43,8 @@ function count_files(n, key_length)
     println("count_files end")
 end
 
-# shows that 100 keys give 82 results.  that's not good, but it
-# suggests we're unlikely to find many sub-matches (since
+# shows that 100 keys (3 bytes) give 82 results.  that's not good, but
+# it suggests we're unlikely to find many sub-matches (since
 # synchronisation with the plaintext is weak).
 
 
