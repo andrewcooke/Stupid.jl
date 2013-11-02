@@ -25,8 +25,8 @@ statistical analysis packages like R.
 characters, so I can re-use any tools I develop.  In some ways it may
 also simplify analysis (less state for a given key size, but for a
 given sized state, less information is exposed when a character is
-encrypted).  Remember that my aim is to learn about cipher analysis,
-not to "fix" anyone's code.
+encrypted).  My aim is to learn about cipher analysis, not to "fix"
+anyone's code.
 
 ## Plaintext Injection Attack
 
@@ -53,6 +53,14 @@ short periods.  The longest period was 319 characters and 43% achieved
 stationary state (period 1) after 1500 characters or less.
 
 The analysis can be seen in [Prefix.jl](src/Prefix.jl).
+
+## Ciphertext Collisions
+
+When [Little Brother](little-brother.txt) is encrypted with 100
+distinct, random keys, of length 3 bytes, the endings of 20% of the
+files are not unique.
+
+The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
 ## Copyright
 

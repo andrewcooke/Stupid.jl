@@ -136,12 +136,18 @@ end
 
 # direct evaluation for known length text (more efficient)
 
-function encrypt(state::State, plain::Array{Uint8}; debug=false, forwards=true)
-    cipher = Array(Uint8, length(plain))
+function encrypt(state::State, plain::Array{Uint8}, cipher::Array{Uint8}; 
+                 debug=false, forwards=true)
+    @assert length(plain) == length(cipher)
     for i = 1:length(plain)
         cipher[i] = encrypt(state, plain[i], debug=debug, forwards=forwards)
     end
     cipher
+end
+
+function encrypt(state::State, plain::Array{Uint8}; debug=false, forwards=true)
+    cipher = Array(Uint8, length(plain))
+    encrypt(state, plain, cipher, debug=debug, forwards=forwards)
 end
 
 function encrypt(key, plain::Array{Uint8}; debug=false, forwards=true)
