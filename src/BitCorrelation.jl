@@ -5,6 +5,11 @@ using LittleBrother, BitDistance, Tasks2, Gadfly, DataFrames, Cipher
 export tests
 
 
+# bitwise correlation.  equivalent (to within a constant scale factor)
+# to expressing the two signals (cipher and counter) as streams of
+# bits, replacing 0 with -1, and doing a "normal" cross-correlation at
+# byte-size offsets.
+
 function correlate(cipher, offset)
     offset = offset < 0 ? offset + 255 : offset
     c = 0

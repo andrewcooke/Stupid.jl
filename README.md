@@ -69,10 +69,12 @@ for 3 byte keys.  Typically a peak or trough at ~0 offset with other
 features at 64 and 128 bytes offset.  The same structure also appears
 to be visible in 8 byte keys.
 
-Here is the correlation for [Little Brother](little-brother.txt)
-wncrypted with key 0xacb89d:
+Here is the correlation for [Little Brother](little-brother.txt),
+encrypted with key 0xacb89d:
 
 ![correlation for 3 byte key](bit-correlation-3-acb89d.png)
+
+The analysis can be seen in [Prefix.jl](src/Prefix.jl).
 
 ## Copyright
 
