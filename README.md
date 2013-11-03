@@ -104,8 +104,9 @@ length is a power of 2 (the calculation is modulo key length; I had a
 more detailed explanation when I predicted this, but didn't make good
 notes, sorry).
 
-Here is the correlation for 5 random keys, with the zero offset points
-marked in a distinct colour.
+Here is the correlation for 5 random keys, encrypting [Little
+Brother](little-brother.txt), with the zero offset points marked in a
+distinct colour.
 
 ![plaintext correlation for lowest 2 bits with 8 byte key](plain-corelate-8-3.png)
 
