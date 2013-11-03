@@ -68,8 +68,6 @@ function plot_plain_correlation(n, key_length)
         chi = length(cipher) - (i > 0 ? 0 : -i)
         plo = i < 0 ? 1-i : 1
         phi = length(plain) - (i > 0 ? i : 0)
-        @printf("%d  %d:%d %d  %d:%d %d\n", 
-                i, clo, chi, chi - clo, plo, phi, phi - plo)
         c = 0
         for (a, b) in zip(cipher[clo:chi], plain[plo:phi])
             c = c + BITS[(0xff $ a $ b) & 0xff + 1] - 4
@@ -91,7 +89,9 @@ function tests()
     println("BitCorrelation")
 #    show_counter_correlation(10, 3)
 #    plot_counter_correlations()
-    plot_plain_correlation(20, 3)
+#    plot_plain_correlation(20, 3)
+#    plot_plain_correlation(20, 4)
+    plot_plain_correlation(20, 8)
 end
 
 end

@@ -83,6 +83,8 @@ encrypted with key 0xacb89d:
 
 The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
 
+## Plaintext Identification
+
 ## Copyright
 
 Code copyright [Andrew Cooke](mailto:andrew@acooke.org) 2013, licensed

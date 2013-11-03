@@ -101,3 +101,10 @@ NOT ADDRESSED
 - can we see the counter in the output?  if we encrypt text (ie not
   random), can we seen the signature of the counter xored with the
   output?  a distinguishing attack.
+
+
+- adaptive plaintext attack attempting to zero internal state
+
+- how does injection attack actually work, since it doesn't null
+  counter?  is counter really necessary?  is it just sucky general
+  behaviour?  do constants work?
