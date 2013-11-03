@@ -96,8 +96,8 @@ There is a small but consistent bitwise (anti-)correlation between the
 lowest two bits of plaintext and ciphertext for 8 byte keys at zero
 offset.
 
-A practical example where this can be used is when a use is when a
-user is suspected of encrypting a particular document.
+A practical example where this can be used is when a user is suspected
+of encrypting a particular document.
 
 The probable mechanism is that these bits control permutation when key
 length is a power of 2 (the calculation is modulo key length; I had a
