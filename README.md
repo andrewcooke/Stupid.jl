@@ -100,7 +100,7 @@ A practical example where this can be used is when a use is when a
 user is suspected of encrypting a particular document.
 
 The probable mechanism is that these bits control permutation when key
-length is a power (calculation modulo key length).
+length is a power of 2 (the calculation is modulo key length).
 
 Here is the correlation for 5 random keys, with the zero offset points
 marked in a distinct colour.

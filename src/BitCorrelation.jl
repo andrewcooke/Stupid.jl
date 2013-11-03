@@ -57,7 +57,7 @@ end
 function plot_plain_correlation(n, shift, key_length, mask)
     println("plot_plain_correlation begin")
     offset, correlation, zero = Int[], Int[], Bool[]
-    correcn = BITS[mask] / 2
+    correcn = BITS[mask + 1] / 2
     for j = 1:n
         println(j)
         key, cipher = consume(take(1, encrypt_file(key_length)))
@@ -69,7 +69,7 @@ function plot_plain_correlation(n, shift, key_length, mask)
             phi = length(plain) - (i > 0 ? i : 0)
             c = 0
             for (a, b) in zip(cipher[clo:chi], plain[plo:phi])
-                c = c + BITS[(0xff $ a $ b) & mask + 1] - 4
+                c = c + BITS[(0xff $ a $ b) & mask + 1] - correcn
             end
             push!(offset, i)
             push!(zero, i == 0)
@@ -89,12 +89,12 @@ function tests()
     println("BitCorrelation")
 #    show_counter_correlation(10, 3)
 #    plot_counter_correlations()
-    plot_plain_correlation(5, 10, 3, 0xff)
-    plot_plain_correlation(5, 10, 4, 0xff)
+#    plot_plain_correlation(5, 10, 3, 0xff)
+#    plot_plain_correlation(5, 10, 4, 0xff)
     plot_plain_correlation(5, 10, 8, 0xff)
     plot_plain_correlation(5, 10, 8, 0x03)
     plot_plain_correlation(5, 10, 8, 0xfc)
-    plot_plain_correlation(5, 10, 9, 0xff)
+#    plot_plain_correlation(5, 10, 9, 0xff)
 end
 
 end
