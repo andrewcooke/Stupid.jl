@@ -107,6 +107,8 @@ marked in a distinct colour.
 
 ![plaintext correlation for lowest 2 bits with 8 byte key](plain-corelate-8-3.png)
 
+The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
+
 ## Copyright
 
 Code copyright [Andrew Cooke](mailto:andrew@acooke.org) 2013, licensed
