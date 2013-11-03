@@ -33,7 +33,7 @@ anyone's code.
 In some cases, injecting a pre-calculated fragment in the plaintext
 can force the internal state of the cipher to a known point (excluding
 the internal counter, which is known anyway).  Following text can then
-be decypted directly.
+be decrypted directly.
 
 A practical example where this can be used is the encryption of a web
 page that displays user-supplied data (like a name or comment).
@@ -104,7 +104,7 @@ length is a power of 2 (the calculation is modulo key length; I had a
 more detailed explanation when I predicted this, but didn't make good
 notes, sorry).
 
-Here is the correlation for 5 random keys, encrypting [Little
+Here is the correlation for 5 random 8 byte keys, encrypting [Little
 Brother](little-brother.txt), with the zero offset points marked in a
 distinct colour.
 

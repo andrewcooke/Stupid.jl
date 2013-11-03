@@ -27,6 +27,14 @@ ADDRESSED
   behaviour?  do constants work?  [it looks like it's mainly a double
   xor; counter works better than constants.]
 
+- can we see the counter in the output?  if we encrypt text (ie not
+  random), can we seen the signature of the counter xored with the
+  output?  a distinguishing attack.
+
+- is output similar to text?  measure bit distance letter by letter.
+  look at whether there is a lag (cross-correlation).
+
+
 PARTIALLY ADDRESSED 
 
 - does state repeat too quickly?  what about with text?
@@ -34,6 +42,8 @@ PARTIALLY ADDRESSED
 - what's the distance between the same text with different keys?
   maybe it's less than expected because self-encrypting dominates the
   key after some time?
+
+- distinguishing attacks are a thing, so do stats.
 
 
 NOT ADDRESSED
@@ -48,7 +58,7 @@ NOT ADDRESSED
 
 - when plaintext unknown, just run it backwards.  when we can't infer,
   guess.  how does that reduce the search space?  maybe with a reduced
-  alphabet?
+  alphabet?  [harder than expected ;o]
 
 
 - measure how long it takes to change key by position.  how variable
@@ -82,29 +92,14 @@ NOT ADDRESSED
 - measure diffusion(?) - change a bit in the key and see how the
   ciphertext changes.
 
-
 - encrypt the same text many times using different keys.  can we
   combine the encrypted streams in a way that reveals the text?  in
   other words, if the underlying generator is not random then the xor
   between two ciphertexts will show... what?  what statistic would
   suggest that this is a good idea? 
 
-- more interesting are relationships between the ciphertext and either
-  the plaintext or the input keys.  for example:
-  - when the same plaintext is encrypted by multiple keys, can we
-    detect any similarity in the ciphertexts?
-  - do those ciphertexts tend to converge (as key state is replaced by
-    state from the plaintext)?
-
-- is output similar to text?  measure bit distance letter by letter.
-  look at whether there is a lag (cross-correlation).
-
-
-- distinguishing attacks are a thing, so do stats.
-
-- can we see the counter in the output?  if we encrypt text (ie not
-  random), can we seen the signature of the counter xored with the
-  output?  a distinguishing attack.
+- when the same plaintext is encrypted by multiple keys, can we
+  detect any similarity in the ciphertexts?
 
 
 - adaptive plaintext attack attempting to zero internal state
