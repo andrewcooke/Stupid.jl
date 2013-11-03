@@ -22,6 +22,10 @@ ADDRESSED
   "self-encryted" value, no matter what the key.  if so, then we can
   look for patterns related to common fragments.
 
+- how does injection attack actually work, since it doesn't null
+  counter?  is counter really necessary?  is it just sucky general
+  behaviour?  do constants work?  [it looks like it's mainly a double
+  xor; counter works better than constants.]
 
 PARTIALLY ADDRESSED 
 
@@ -105,6 +109,3 @@ NOT ADDRESSED
 
 - adaptive plaintext attack attempting to zero internal state
 
-- how does injection attack actually work, since it doesn't null
-  counter?  is counter really necessary?  is it just sucky general
-  behaviour?  do constants work?

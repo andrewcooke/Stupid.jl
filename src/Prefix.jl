@@ -9,6 +9,10 @@ export tests
 # then extract that state?  and then continue with plaintext which
 # will be decryptable.
 
+# (note that there's nothing particularly prefix about this - there's
+# nothing special about the starting state, so presumably it works
+# equally well as injection).
+
 # first, see what the effect of the counter on state is by measuring
 # the distance to repeated state with the counter plaintext.
 
@@ -51,8 +55,7 @@ function random_stats()
 end
 
 # of course, the above shows multiples of 256 because count is in the
-# state.  but with a counter plaintext we can nullify that.  so let's
-# focus on that.
+# state.  but we know the count value anyway, so we can ignore that.
 
 function no_count_hash(s::State)
     h::Int64 = s.key_length
@@ -65,21 +68,33 @@ function no_count_hash(s::State)
     h
 end
 
-function no_count_stats()
-    println("no_count_stats begin")
+function counter_stats()
+    println("counter_stats begin")
     for i = 1:10
         key = collect2(Uint8, take(3, rands(Uint8)))
         n1, n2, s = loop_stats(key, counter(), hash=no_count_hash)
         @printf("%s %d/%d\n", to_hex(key), n1, n2)
     end
-    println("no_count_stats end")
+    println("counter_stats end")
 end
 
-# which shows some 1-cycle keys.  let's try get some idea of how often
-# those occur.
+function constant_stats()
+    println("constant_stats begin")
+    for i = 1:10
+        key = collect2(Uint8, take(3, rands(Uint8)))
+        n1, n2, s = loop_stats(key, counter(), hash=no_count_hash)
+        @printf("%s %d/%d\n", to_hex(key), n1, n2)
+    end
+    println("constant_stats end")
+end
 
-function no_count_distribution(key_length)
-    println("no_count_distribution begin")
+# counter_stats shows some 1-cycle keys (it seems that the counter is
+# being xored twice with key[pos-a] and at least partially negating
+# the internal count).  let's try get some idea of how often those
+# occur.
+
+function counter_distribution(key_length)
+    println("counter_distribution begin")
     mn, mx, delay, count, n = 1e9, 0, 0, 0, 0
     for i = 1:100
         n1, n2, s = loop_stats(take(key_length, rands(Uint8)), 
@@ -99,7 +114,7 @@ function no_count_distribution(key_length)
     end
     @printf("key length %d; smallest loop is %d (after max delay %d); occurs %d%% of the time; max loop %d\n",
             key_length, mn, delay, count, mx)
-    println("no_count_distribution end")    
+    println("counter_distribution end")    
 end
 
 # so 1/10 of 3 byte keys, 1/3 for larger.
@@ -172,10 +187,11 @@ end
 function tests()
     println("Prefix")
 #    random_stats()
-#    no_count_stats()
-#    no_count_distribution(3)
-#    no_count_distribution(4)
-#    no_count_distribution(8)
+    counter_stats()
+    constant_stats()
+#    counter_distribution(3)
+#    counter_distribution(4)
+#    counter_distribution(8)
 #    zero_counts()
 end
 

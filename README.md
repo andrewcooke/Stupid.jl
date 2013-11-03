@@ -35,8 +35,8 @@ can force the internal state of the cipher to a known point (excluding
 the internal counter, which is known anyway).  Following text can then
 be decypted directly.
 
-A practical example is the encryption of a web page that displays
-user-supplied data (like a name or comment).
+A practical example where this can be used is the encryption of a web
+page that displays user-supplied data (like a name or comment).
 
 The fragment is a counter (modulo 0xff) that mirrors the counter in
 the cipher state.
@@ -60,8 +60,8 @@ When [Little Brother](little-brother.txt) is encrypted with 100
 distinct, random keys, of length 3 bytes, the endings of ~30% of the
 files are not unique.
 
-A pactical example is disk encryption, where the same file can be
-identified for multiple users.
+A pactical example where this can be used is against disk encryption,
+where the same file can be identified for multiple users.
 
 The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
@@ -73,17 +73,29 @@ trough at ~0 offset with other features at 64 and 128 bytes offset.
 Similar structures also appears to be visible (varying by key;
 statistical significance unclear) with 8 byte keys.
 
-A practical example is detecting the use of this (weak) cipher in data
-of unknown origin.
+A practical example where this can be used is detecting the use of
+this (weak) cipher in data of unknown origin.
 
 Here is the correlation for [Little Brother](little-brother.txt),
 encrypted with key 0xacb89d:
 
-![correlation for 3 byte key](bit-correlation-3-acb89d.png)
+![counter correlation for 3 byte key](bit-correlation-3-acb89d.png)
 
 The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
 
 ## Plaintext Identification
+
+There is a small but consistent bitwise (anti-)correlation between the
+lowest two bits of plaintext and ciphertext for 8 byte keys at zero
+offset.
+
+A practical example where this can be used is when a use is when a
+user is suspected of encrypting a particular document.
+
+Here is the correlation for 5 random keys, with the zero offset points
+marked in a distinct colour.
+
+![plaintext correlation for lowest 2 bits with 8 byte key](plain-corelate-8-3.png)
 
 ## Copyright
 
