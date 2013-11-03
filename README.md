@@ -90,7 +90,7 @@ encrypted with key 0xacb89d:
 
 The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
 
-## Plaintext Matching
+## Statistical Plaintext Matching
 
 There is a small but consistent bitwise (anti-)correlation between the
 lowest two bits of plaintext and ciphertext for 8 byte keys at zero
