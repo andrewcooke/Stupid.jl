@@ -39,7 +39,9 @@ A practical example where this can be used is the encryption of a web
 page that displays user-supplied data (like a name or comment).
 
 The fragment is a counter (modulo 0xff) that mirrors the counter in
-the cipher state.
+the cipher state.  The probable mechanism is a combination of the
+counter plaintext cancelling some (or all) counter bits and zeroing of
+state when a byte is xored with itself.
 
 For 3 byte keys, a 32 byte fragment affects 4% of keys.  For 4 byte
 keys a longer fragment (120 bytes) is necessary to affect a similar
@@ -60,8 +62,11 @@ When [Little Brother](little-brother.txt) is encrypted with 100
 distinct, random keys, of length 3 bytes, the endings of ~30% of the
 files are not unique.
 
-A pactical example where this can be used is against disk encryption,
+A practical example where this can be used is against disk encryption,
 where the same file can be identified for multiple users.
+
+The probable mechanism is that initial state is slowly eroded by
+same-byte xor.
 
 The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
@@ -75,6 +80,8 @@ statistical significance unclear) with 8 byte keys.
 
 A practical example where this can be used is detecting the use of
 this (weak) cipher in data of unknown origin.
+
+The probable mechanism is matching the internal counter.
 
 Here is the correlation for [Little Brother](little-brother.txt),
 encrypted with key 0xacb89d:
@@ -91,6 +98,9 @@ offset.
 
 A practical example where this can be used is when a use is when a
 user is suspected of encrypting a particular document.
+
+The probable mechanism is that these bits control permutation when key
+length is a power (calculation modulo key length).
 
 Here is the correlation for 5 random keys, with the zero offset points
 marked in a distinct colour.
