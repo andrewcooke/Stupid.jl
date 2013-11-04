@@ -91,9 +91,9 @@ function tests()
 #    plot_counter_correlations()
 #    plot_plain_correlation(5, 10, 3, 0xff)
 #    plot_plain_correlation(5, 10, 4, 0xff)
-    plot_plain_correlation(5, 10, 8, 0xff)
-    plot_plain_correlation(5, 10, 8, 0x03)
-    plot_plain_correlation(5, 10, 8, 0xfc)
+#    plot_plain_correlation(5, 10, 8, 0xff)
+#    plot_plain_correlation(5, 10, 8, 0x03)
+#    plot_plain_correlation(5, 10, 8, 0xfc)
 #    plot_plain_correlation(5, 10, 9, 0xff)
 end
 

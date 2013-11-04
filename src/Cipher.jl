@@ -26,6 +26,7 @@ end
 State(key::ASCIIString) = State(hex2bytes(key))
 State(key::Task) = State(collect2(Uint8, key))
 
+
 function hash_by(s, n)
     h::Int64 = s.key_length
     h = h << n $ s.count
@@ -49,7 +50,7 @@ Base.isequal(x::State, y::State) = (x.key_length == y.key_length &&
                                     x.key == y.key)
 
 function Base.show(io::IO, state::State)
-    show(io, @sprintf("%4d %s %d/%02x %d/%02x %d/%02x\n", 
+    show(io, @sprintf("%4d %s %d/%02x %d/%02x %d/%02x", 
                       state.count, bytes2hex(state.key), 
                       state.pos_a, state.key[state.pos_a+1], 
                       state.pos_b, state.key[state.pos_b+1], 

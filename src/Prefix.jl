@@ -2,7 +2,7 @@
 module Prefix
 using BitDistance, Cipher, Gadfly, DataFrames, Rand2, Tasks2
 
-export tests
+export tests, is_zero
 
 # it seems that a counter plaintext can corrupt the state in some way
 # (from experience with other approaches and buggy code). maybe we can

@@ -21,12 +21,10 @@ information in the comments.
 (or close) with the flexibility of Python and has ambitions to replace
 statistical analysis packages like R.
 
-**Why 8 bit?** - other stream ciphers (like Stupid) work with 8 bit
-characters, so I can re-use any tools I develop.  In some ways it may
-also simplify analysis (less state for a given key size, but for a
-given sized state, less information is exposed when a character is
-encrypted).  My aim is to learn about cipher analysis, not to "fix"
-anyone's code.
+**Why 8 bit?** - other stream ciphers work with 8 bit characters, so I
+can re-use any tools I develop.  In some ways it may also simplify
+analysis (less state for a given key size, but for a given sized
+state, less information is exposed when a character is encrypted).
 
 ## Plaintext Injection Attack
 
@@ -75,7 +73,7 @@ The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 Ciphertext bitwise cross-correlated with a counter (modulo 0xff)
 generally shows clear structure for 3 byte keys.  Typically a peak or
 trough at ~0 offset with other features at 64 and 128 bytes offset.
-Similar structures also appears to be visible (varying by key;
+Similar structures also appear to be visible (varying by key;
 statistical significance unclear) with 8 byte keys.
 
 A practical example where this can be used is detecting the use of
