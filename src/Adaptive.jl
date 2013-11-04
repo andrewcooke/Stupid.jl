@@ -71,7 +71,7 @@ function show_attack(n, key_length, a, label; debug=false)
 end
 
 function tests()
-    n = 100
+    n = 1000
     debug = false
     show_attack(n, 3, () -> echo(16), "echo(16)", debug=debug)
     show_attack(n, 3, () -> echo(32), "echo(32)", debug=debug)
