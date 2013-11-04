@@ -64,6 +64,14 @@ function both(n)
     end
 end
 
+function zero(n)
+    Task() do c
+        for i = 1:n
+            c = produce2(0)
+        end
+    end
+end
+
 
 function show_attack(n, key_length, a, label; debug=false)
     count = score_attack(n, key_length, a, debug=debug)
@@ -82,6 +90,7 @@ function tests()
     show_attack(n, 3, () -> both(16), "both(16)", debug=debug)
     show_attack(n, 3, () -> both(32), "both(32)", debug=debug)
     show_attack(n, 3, () -> both(64), "both(64)", debug=debug)
+    show_attack(n, 3, () -> zero(32), "zero(32)", debug=debug)
 end
 
 end

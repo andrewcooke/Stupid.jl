@@ -98,9 +98,7 @@ A practical example where this can be used is when a user is suspected
 of encrypting a particular document.
 
 The probable mechanism is that these bits control permutation when key
-length is a power of 2 (the calculation is modulo key length; I had a
-more detailed explanation when I predicted this, but didn't make good
-notes, sorry).
+length is a power of 2 (the calculation is modulo key length).
 
 Here is the correlation for 5 random 8 byte keys, encrypting [Little
 Brother](little-brother.txt), with the zero offset points marked in a

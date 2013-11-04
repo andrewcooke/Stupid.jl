@@ -2,10 +2,10 @@
 ADDRESSED
 
 - similar keys (bit distance?) give similar encryptions.  use this to
-  hunt for keys.  genetic?
+  hunt for keys.  genetic?  [failed]
 
 - plaintext that goes 0,1,2,3... will xor count (state constantly zero
-  if key also zero).
+  if key also zero) [actually, it won't - yet it works...]
 
 - if you look at the text vectors, constant values encrypt to the same
   value, except for a prefix.  how general is this?  is the encryption
@@ -33,6 +33,8 @@ ADDRESSED
 
 - is output similar to text?  measure bit distance letter by letter.
   look at whether there is a lag (cross-correlation).
+
+- adaptive plaintext attack attempting to zero internal state [failed]
 
 
 PARTIALLY ADDRESSED 
@@ -101,6 +103,4 @@ NOT ADDRESSED
 - when the same plaintext is encrypted by multiple keys, can we
   detect any similarity in the ciphertexts?
 
-
-- adaptive plaintext attack attempting to zero internal state
 
