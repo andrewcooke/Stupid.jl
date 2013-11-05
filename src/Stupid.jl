@@ -1,5 +1,5 @@
 module Stupid
 using Cipher, Tasks2, Rand2, BitDistance, KeyDistance, Prefix, 
-LittleBrother, SelfEncrypt, BitCorrelation, Adaptive
+LittleBrother, SelfEncrypt, BitCorrelation, Adaptive, BruteForce
 
 end

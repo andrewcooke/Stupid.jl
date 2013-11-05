@@ -82,15 +82,15 @@ function tests()
     println("Adaptive")
     n = 1000
     debug = false
-    show_attack(n, 3, () -> echo(16), "echo(16)", debug=debug)
-    show_attack(n, 3, () -> echo(32), "echo(32)", debug=debug)
-    show_attack(n, 3, () -> echo(64), "echo(64)", debug=debug)
-    show_attack(n, 3, () -> count0(32), "count0(32)", debug=debug)
-    show_attack(n, 3, () -> count1(32), "count1(32)", debug=debug)
-    show_attack(n, 3, () -> both(16), "both(16)", debug=debug)
-    show_attack(n, 3, () -> both(32), "both(32)", debug=debug)
-    show_attack(n, 3, () -> both(64), "both(64)", debug=debug)
-    show_attack(n, 3, () -> zero(32), "zero(32)", debug=debug)
+#    show_attack(n, 3, () -> echo(16), "echo(16)", debug=debug)
+#    show_attack(n, 3, () -> echo(32), "echo(32)", debug=debug)
+#    show_attack(n, 3, () -> echo(64), "echo(64)", debug=debug)
+#    show_attack(n, 3, () -> count0(32), "count0(32)", debug=debug)
+#    show_attack(n, 3, () -> count1(32), "count1(32)", debug=debug)
+#    show_attack(n, 3, () -> both(16), "both(16)", debug=debug)
+#    show_attack(n, 3, () -> both(32), "both(32)", debug=debug)
+#    show_attack(n, 3, () -> both(64), "both(64)", debug=debug)
+#    show_attack(n, 3, () -> zero(32), "zero(32)", debug=debug)
 end
 
 end
