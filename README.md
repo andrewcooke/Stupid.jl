@@ -135,6 +135,10 @@ is reduced by 8 bits.
 A practical example where this can be used is when encrypting UTF-8
 text, which has a known header.
 
+The attack works because the ciphertext is xored with the plaintext
+and the internal state; knowing the plaintext constrains the internal
+state.
+
 The analysis for 3 byte keys can be seen in
 [BruteForce.jl](src/BruteForce.jl).
 
