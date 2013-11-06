@@ -54,7 +54,7 @@ stationary state (period 1) after 1500 characters or less.
 
 The analysis can be seen in [Prefix.jl](src/Prefix.jl).
 
-## Ciphertext Collisions
+## Ciphertext Collisions (1)
 
 When [Little Brother](little-brother.txt) is encrypted with 100
 distinct, random keys, of length 3 bytes, the endings of ~30% of the
@@ -119,19 +119,19 @@ text, which has a known header.
 The analysis for 3 byte keys can be seen in
 [BruteForce.jl](src/BruteForce.jl).
 
-## Sibling Keys
+## Ciphertext Collisions (2)
 
-Around 2-3% of 3 byte keys have siblings that give identical
-encryption results.  For example, both 0x029f7c and 0x0210f3.
+Around 1% of 3 byte keys have siblings that give matching encryption
+results after the first few bytes.  For example, both 0x25730e and
+0x92ef1c give the same ciphertext for 100 random 16 byte strings.
 
 This implies that the cipher is less secure than would be expected
 from the key length.
 
-I do not know the mechanism, but casual inspection shows that the
-first byte is often (but not always) the same.  This may also be
-related to the "missing logic" in the code used in the partial
-plaintext attack (the routine is less symmetric than expected because
-some combinations of pos values cannot occur).
+I do not know the mechanism, but this may be related to the "missing
+logic" in the code used in the partial plaintext attack (the routine
+is less symmetric than expected because some combinations of pos
+values cannot occur).
 
 The analysis can be seen in [BruteForce.jl](src/BruteForce.jl).
 

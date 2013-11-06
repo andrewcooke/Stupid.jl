@@ -657,8 +657,10 @@ end
 
 
 function test_duplicates(n, l)
+
     # extend test_plain to check that a second plaintext also encrypts
-    # identically
+    # identically - not all do, so we print stats.
+
     @printf("test_duplicates begin [%d, %d]\n", n, l)
     count = 0
     for i = 1:n
@@ -677,13 +679,33 @@ function test_duplicates(n, l)
             cipher2 = encrypt(key, plain2)
             @printf("check with %s\n", to_hex(plain2))
             for other in keys
-                cipher3 = encrypt(key, plain2)
+                cipher3 = encrypt(other, plain2)
                 @printf("%s: %s\n", to_hex(other), to_hex(cipher3))
+            end
+            for other in keys
+                if other != key
+                    check_pair(100, 16, key, other, 1)
+                    check_pair(100, 16, key, other, 3)
+                end
             end
         end
     end
     @printf("duplicates: %d/%d\n", count, n)
     println("test_duplicates end")
+end
+
+function check_pair(n, l, key1, key2, d)
+    count = 0
+    for i = 1:n
+        plain = collect2(Uint8, take(l, rands(Uint8)))
+        cipher1 = encrypt(key1, plain)
+        cipher2 = encrypt(key2, plain)
+        if cipher1[d:] == cipher2[d:]
+            count += 1
+        end
+    end
+    @printf("%s / %s: %4.1f%% of ciphertext match after %d characters (sample size %d)\n", 
+            to_hex(key1), to_hex(key2), 100 * count / n, d - 1, n)
 end
 
         
