@@ -119,9 +119,9 @@ text, which has a known header.
 The analysis for 3 byte keys can be seen in
 [BruteForce.jl](src/BruteForce.jl).
 
-## Duplicate Keys
+## Sibling Keys
 
-Around 2-3% of 3 byte keys have duplicates that give identical
+Around 2-3% of 3 byte keys have siblings that give identical
 encryption results.  For example, both 0x029f7c and 0x0210f3.
 
 This implies that the cipher is less secure than would be expected
