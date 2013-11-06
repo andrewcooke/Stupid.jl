@@ -39,7 +39,7 @@ page that displays user-supplied data (like a name or comment).
 The fragment is a counter (modulo 0xff) that mirrors the counter in
 the cipher state.  The probable mechanism is a combination of the
 counter plaintext canceling some (or all) counter bits and zeroing of
-state when a byte is xored with itself.
+state when a byte is xored with a similar value.
 
 For 3 byte keys, a 32 byte fragment affects 4% of keys.  For 4 byte
 keys a longer fragment (120 bytes) is necessary to affect a similar
@@ -64,7 +64,7 @@ A practical example where this can be used is against disk encryption,
 where the same file can be identified for multiple users.
 
 The probable mechanism is that initial state is slowly eroded by
-same-byte xor.
+similar-byte xor.
 
 The analysis can be seen in [SelfEncrypt.jl](src/SelfEncrypt.jl).
 
