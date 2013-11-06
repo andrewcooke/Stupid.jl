@@ -45,6 +45,8 @@ with the hypothesis that it is) random, at all key sizes.
 When encrypting text the data for 8 and 16 byte keys also appeared to
 be random.
 
+The analysis can be seen in [Statistics.jl](src/Statistics.jl).
+
 ## Plaintext Injection Attack
 
 In some cases, injecting a pre-calculated fragment in the plaintext
