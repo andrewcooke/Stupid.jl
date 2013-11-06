@@ -108,6 +108,14 @@ distinct colour.
 
 The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
 
+## Partial Known Plaintext Attack
+
+If the initial character of the plaintext is known then the key space
+is reduced by 8 bits.
+
+The analysis can be seen in [BruteForce.jl](src/BruteForce.jl).
+
+
 ## Copyright
 
 Code copyright [Andrew Cooke](mailto:andrew@acooke.org) 2013, licensed
