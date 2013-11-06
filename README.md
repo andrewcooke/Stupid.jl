@@ -122,8 +122,8 @@ The analysis for 3 byte keys can be seen in
 ## Ciphertext Collisions (2)
 
 Around 1% of 3 byte keys have siblings that give matching encryption
-results after the first few bytes.  For example, both 0x25730e and
-0x92ef1c give the same ciphertext for 100 random 16 byte strings.
+results.  For example, both 0x25730e and 0x92ef1c give the same
+ciphertext for 100 random 16 byte strings.
 
 This implies that the cipher is less secure than would be expected
 from the key length.
