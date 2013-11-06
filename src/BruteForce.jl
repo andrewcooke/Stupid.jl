@@ -715,7 +715,7 @@ function tests()
 #    test_exact_random(1000)
 #    test_plain(100, 16)
 #    test_counting_random(1000)  # almost exactly 8 bits saved per key
-    test_duplicates(500, 16)
+#    test_duplicates(500, 16)
 end
 
 end

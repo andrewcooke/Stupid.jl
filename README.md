@@ -26,6 +26,25 @@ can re-use any tools I develop.  In some ways it may also simplify
 analysis (less state for a given key size, but for a given sized
 state, less information is exposed when a character is encrypted).
 
+## Statistics
+
+All results below are for a plaintext size of 659408 bytes (the size
+of the [Little Brother](little-brother.txt) text).  The tests used
+Pearson's Chi-Squared test to assess whether bytes and bit were
+uniformly distributed (bytes from 0 to 255; bits individually over 0
+and 1).
+
+Ciphertext is significantly different from random bytes when the
+plaintext is constant (0x00, 0x55 or 0xff) for key lengths of 3 and 8
+bytes.  The least significant bits are particularly unreliable.  16
+byte keys give better output, but some keys are still problematic.
+
+When encrypting random data the output does appear to be random, at
+all key sizes.
+
+When encrypting text the data for 8 and 16 byte keys also appeared to
+be random.
+
 ## Plaintext Injection Attack
 
 In some cases, injecting a pre-calculated fragment in the plaintext
