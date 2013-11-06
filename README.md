@@ -1,4 +1,4 @@
-# 8 Bit Stupid
+# Analysis Of The 8 Bit "Stupid" Cipher
 
 Analysis of an 8 bit version of the ["stupid"
 cipher](http://news.quelsolaar.com/#comments101) as discussed on
@@ -38,7 +38,7 @@ page that displays user-supplied data (like a name or comment).
 
 The fragment is a counter (modulo 0xff) that mirrors the counter in
 the cipher state.  The probable mechanism is a combination of the
-counter plaintext cancelling some (or all) counter bits and zeroing of
+counter plaintext canceling some (or all) counter bits and zeroing of
 state when a byte is xored with itself.
 
 For 3 byte keys, a 32 byte fragment affects 4% of keys.  For 4 byte
