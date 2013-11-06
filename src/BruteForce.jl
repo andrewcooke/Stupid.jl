@@ -656,13 +656,44 @@ function test_counting_random(n)
 end
 
 
+function test_duplicates(n, l)
+    # extend test_plain to check that a second plaintext also encrypts
+    # identically
+    @printf("test_duplicates begin [%d, %d]\n", n, l)
+    count = 0
+    for i = 1:n
+        if i % 10 == 0
+            println(i)
+        end
+        key = collect2(Uint8, take(3, rands(Uint8)))
+        plain = collect2(Uint8, take(l, rands(Uint8)))
+        cipher = encrypt(key, plain)
+        oracle = plain_oracle(cipher, plain)
+        keys = collect(force3(oracle, plain, cipher))
+        if length(keys) != 1
+            count = count + 1
+            @printf("%s: %d\n", to_hex(key), length(keys))
+            plain2 = collect2(Uint8, take(l, rands(Uint8)))
+            cipher2 = encrypt(key, plain2)
+            @printf("check with %s\n", to_hex(plain2))
+            for other in keys
+                cipher3 = encrypt(key, plain2)
+                @printf("%s: %s\n", to_hex(other), to_hex(cipher3))
+            end
+        end
+    end
+    @printf("duplicates: %d/%d\n", count, n)
+    println("test_duplicates end")
+end
+
         
 function tests()
     println("BruteForce")
 #    test_exact()
 #    test_exact_random(1000)
 #    test_plain(100, 16)
-    test_counting_random(1000)  # almost exactly 8 bits saved per key
+#    test_counting_random(1000)  # almost exactly 8 bits saved per key
+    test_duplicates(500, 16)
 end
 
 end

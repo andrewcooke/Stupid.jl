@@ -113,8 +113,27 @@ The analysis can be seen in [BitCorrelation.jl](src/BitCorrelation.jl).
 If the initial character of the plaintext is known then the key space
 is reduced by 8 bits.
 
-The analysis can be seen in [BruteForce.jl](src/BruteForce.jl).
+A practical example where this can be used is when encrypting UTF-8
+text, which has a known header.
 
+The analysis for 3 byte keys can be seen in
+[BruteForce.jl](src/BruteForce.jl).
+
+## Duplicate Keys
+
+Around 2-3% of 3 byte keys have duplicates that give identical
+encryption results.  For example, both 0x029f7c and 0x0210f3.
+
+This implies that the cipher is less secure than would be expected
+from the key length.
+
+I do not know the mechanism, but casual inspection shows that the
+first byte is often (but not always) the same.  This may also be
+related to the "missing logic" in the code used in the partial
+plaintext attack (the routine is less symmetric than expected because
+some combinations of pos values cannot occur).
+
+The analysis can be seen in [BruteForce.jl](src/BruteForce.jl).
 
 ## Copyright
 
