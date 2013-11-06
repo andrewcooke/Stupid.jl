@@ -1,6 +1,6 @@
 # The 8 Bit "Stupid" Cipher
 
-This is an informal analysis of an 8 bit version of the ["stupid"
+This is an informal analysis of an 8 bit version of [this
 cipher](http://news.quelsolaar.com/#comments101), as discussed on
 [HN](https://news.ycombinator.com/item?id=6616438).
 
