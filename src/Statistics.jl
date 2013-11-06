@@ -5,10 +5,6 @@ using Cipher, Tasks2, Rand2, NHST, LittleBrother
 export tests
 
 
-# it's pretty obvious that this is only going to be anything like a
-# reasonable cipher with "randomish" input.  but we should quantify
-# this.
-
 function stats8(n, m, source)
     for j = 1:m
         data = source()
