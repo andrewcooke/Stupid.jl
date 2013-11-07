@@ -5,6 +5,11 @@ using Cipher, Tasks2, Rand2
 export bit_distance, change_random_bits, BITS
 
 
+# library routines to measure the bit distance between Uint8 sequences
+
+# BITS can be used directly to get the number of bits in a byte (note
+# 1-based indexing!)
+
 function count_bits(n::Uint8)
     mask = 1
     count = 0

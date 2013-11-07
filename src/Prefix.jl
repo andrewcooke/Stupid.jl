@@ -2,7 +2,8 @@
 module Prefix
 using BitDistance, Cipher, Gadfly, DataFrames, Rand2, Tasks2
 
-export tests, is_zero
+export tests, is_zero, loop_stats, no_count_hash
+
 
 # it seems that a counter plaintext can corrupt the state in some way
 # (from experience with other approaches and buggy code). maybe we can
@@ -16,25 +17,27 @@ export tests, is_zero
 # first, see what the effect of the counter on state is by measuring
 # the distance to repeated state with the counter plaintext.
 
-function run_to_repeat(s, c, t; hash=Base.hash)
+function run_to_repeat(s, t; hash=Base.hash, limit=-1)
     n = 0
     known = Set()
-    while true
+    while limit != 0
         h = hash(s)
         if in(h, known)
             return n
         end
         push!(known, h)
-        n = n+1
+        n = n + 1
         consume(t)
+        limit = limit - 1
     end
+    error("limit exceeded - no loop")
 end
 
-function loop_stats(key, plain; debug=false, hash=Base.hash)
+function loop_stats(key, plain; debug=false, hash=Base.hash, limit=-1)
     s = State(key)
     t = encrypt(s, plain, debug=debug)
-    n1 = run_to_repeat(s, plain, t, hash=hash)
-    n2 = run_to_repeat(s, plain, t, hash=hash)
+    n1 = run_to_repeat(s, t, hash=hash, limit=limit)
+    n2 = run_to_repeat(s, t, hash=hash, limit=limit)
 #    if n2 <= 256
 #        collect(take(5, encrypt(s, plain, debug=true)))
 #    end

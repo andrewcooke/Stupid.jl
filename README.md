@@ -26,7 +26,7 @@ can re-use any tools I develop.  In some ways it may also simplify
 analysis (less state for a given key size, but for a given sized
 state, less information is exposed when a character is encrypted).
 
-## Statistics
+## Non-Uniform Statistics
 
 All results below are for a plaintext size of 659408 bytes (the size
 of the [Little Brother](little-brother.txt) text).  The tests used
@@ -46,6 +46,33 @@ When encrypting text the data for 8 and 16 byte keys also appeared to
 be random.
 
 The analysis can be seen in [Statistics.jl](src/Statistics.jl).
+
+## Limited State
+
+The Cipher can be viewed as a stream cipher using "xor with a PRNG"
+whose state is augmented with entropy from the plaintext.  One way to
+measure the diversity of the PRNG (and hence the security of the
+cipher) is to look for repeated internal state.
+
+In [Statistics.jl](src/Statistics.jl) the internal state (excluding
+the counter, which is known to an extrernal attacker) is monitored
+during encryption.  If a repeated state is detected then the number of
+characters encrypted between the first and second occurence of the
+repeated state is recorded.  This is repeated for 100 random keys.
+
+A good quality PRNG would not repeat internal state until all
+available states had been exhausted (ie period = pow(2, N) where N is
+the size of the state in bits).  But a generator that incorporates
+external input might not be able to achieve that.  Birthday collisions
+might limit the period to pow(2, N/2).  For a 3 byte key that would be
+4096; for a 16 byte key ~2E19.
+
+In practice, for 16 byte keys, over 20% of keys have a period of 1
+character.  This behaviour is seen for both constant and random
+plaintext, and for [Little Brother](little-brother.txt).
+
+Curiously, 8 byte keys behave better.  10% of states repeated, for
+0x55, 0xff or english plaintexts, within the first 10,000 characters.
 
 ## Plaintext Injection Attack
 

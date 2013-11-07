@@ -1,6 +1,6 @@
 
 module Statistics
-using Cipher, Tasks2, Rand2, NHST, LittleBrother
+using Cipher, Tasks2, Rand2, NHST, LittleBrother, Prefix
 
 export tests
 
@@ -51,11 +51,32 @@ function chisq2(data)
     collect(map(bin -> run(ChisqTest, bin).p_value, bins))
 end
 
+function loops(key_length, m, plain)
+    mn, nmn, sm, n = 1e9, 0, 0, 0
+    for i = 1:m
+        k = collect2(Uint8, take(key_length, rands(Uint8)))
+        try
+            n1, n2 = loop_stats(k, plain(), hash=no_count_hash, limit=10000)
+            if n2 < mn
+                mn = n2
+                nmn = 1
+            elseif n2 == mn
+                nmn = nmn + 1
+            end
+            sm = sm + n2
+            n = n + 1
+        catch
+        end
+    end
+    @printf("%3d/%3d  min: %d (%d); avg: %5.1f\n", n, m, mn, nmn, sm / n)
+end
+
 function show_stats(n, key_length, label, m, plain; enc=encrypt)
     @printf("%s [%d]\n", label, key_length)
     key = () -> collect2(Uint8, take(key_length, rands(Uint8)))
     stats8(n, m, () -> collect2(Uint8, take(n, enc(key(), plain()))))
     stats2(n, m, () -> collect2(Uint8, take(n, enc(key(), plain()))))
+    loops(key_length, 100, plain)
 end
 
 
