@@ -67,12 +67,14 @@ external input might not be able to achieve that.  Birthday collisions
 might limit the period to pow(2, N/2).  For a 3 byte key that would be
 4096; for a 16 byte key ~2E19.
 
-In practice, for 16 byte keys, over 20% of keys have a period of 1
-character.  This behaviour is seen for both constant and random
-plaintext, and for [Little Brother](little-brother.txt).
+In practice, for 16 byte keys, over 20% of keys have a distance
+between second and third repeats of just 1 character.  This behaviour
+is seen for both constant and random plaintext, and for [Little
+Brother](little-brother.txt).
 
-Curiously, 8 byte keys behave better.  10% of states repeated, for
-0x55, 0xff or english plaintexts, within the first 10,000 characters.
+Curiously, 8 byte keys behave better.  Only(!) 10% of states repeated,
+for 0x55, 0xff or english plaintexts, within the first 10,000
+characters.
 
 ## Plaintext Injection Attack
 
