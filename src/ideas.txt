@@ -104,3 +104,5 @@ NOT ADDRESSED
   detect any similarity in the ciphertexts?
 
 
+- grab the state from random plaintext w 16byte period 1 and see what
+  is happening in detail.
