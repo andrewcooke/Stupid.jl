@@ -72,9 +72,9 @@ between second and third repeats of just 1 character.  This behaviour
 is seen for both constant and random plaintext, and for [Little
 Brother](little-brother.txt).
 
-Curiously, 8 byte keys behave better.  Only(!) 10% of states repeated,
-for 0x55, 0xff or english plaintexts, within the first 10,000
-characters.
+Curiously, 8 byte keys behave better.  Only(!) 10% of keys had
+repeated state, for 0x55, 0xff or english plaintexts, within the first
+10,000 characters.
 
 ## Plaintext Injection Attack
 
