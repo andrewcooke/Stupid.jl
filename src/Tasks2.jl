@@ -49,24 +49,20 @@ function collect2(T::Type, task)
 end
 
 function take(n, source)
-    function task()
+    Task() do
         while n > 0
-            produce2(consume2(source))
+            produce(consume(source))
             n = n - 1
         end
     end
-
-    Task(task)
 end
 
 function repeat(f)
-    function task()
+    Task() do
         while true
-            produce2(f())
+            produce(f())
         end
     end
-
-    Task(task)
 end
 
 function choices(alphabet)
@@ -78,15 +74,13 @@ function constant(n)
 end
 
 function iterate(seq)
-    function task()
+    Task() do
         for s in seq
-            produce2(s)
+            produce(s)
         end
     end
-
-    Task(task)
 end
-
+    
 function counter(start=0)
     repeat() do
         save = start

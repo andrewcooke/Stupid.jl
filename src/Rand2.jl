@@ -2,14 +2,14 @@
 module Rand2
 using Tasks2
 
-export choice, rands, choices, tests
+export choice, rands, choices!, tests
 
 
 function choice(all)
     all[rand(1:length(all))]
 end
 
-function choices(all)
+function choices!(all)
     Task() do
         while length(all) > 0
             produce(splice!(all, rand(1:length(all))))
