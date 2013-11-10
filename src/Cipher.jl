@@ -25,10 +25,11 @@ end
 
 State(key::ASCIIString) = State(hex2bytes(key))
 State(key::Task) = State(collect2(Uint8, key))
+State(state::State) = deepcopy(state)
 
 
 function hash_by(s, n)
-    h::Int64 = s.key_length
+    h::Uint64 = s.key_length
     h = h << n $ s.count
     h = h << n $ s.pos_a
     h = h << n $ s.pos_b
@@ -50,11 +51,11 @@ Base.isequal(x::State, y::State) = (x.key_length == y.key_length &&
                                     x.key == y.key)
 
 function Base.show(io::IO, state::State)
-    show(io, @sprintf("%4d %s %d/%02x %d/%02x %d/%02x", 
-                      state.count, bytes2hex(state.key), 
-                      state.pos_a, state.key[state.pos_a+1], 
-                      state.pos_b, state.key[state.pos_b+1], 
-                      state.pos_c, state.key[state.pos_c+1]))
+    print(io, @sprintf("[I:%02x K:%s A:%02x/%02x B:%02x/%02x C:%02x/%02x]", 
+                       state.count, bytes2hex(state.key), 
+                       state.pos_a, state.key[state.pos_a+1], 
+                       state.pos_b, state.key[state.pos_b+1], 
+                       state.pos_c, state.key[state.pos_c+1]))
 end
 
 

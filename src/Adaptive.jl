@@ -10,7 +10,7 @@ export tests
 
 function apply_attack(s, a; debug=false)
     while true
-        prev = deepcopy(s)
+        prev = State(s)
         c = encrypt(s, 0x0)
         s = prev
         p = consume2(a, c)

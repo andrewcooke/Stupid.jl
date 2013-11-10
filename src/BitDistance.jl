@@ -2,13 +2,10 @@
 module BitDistance
 using Cipher, Tasks2, Rand2
 
-export bit_distance, change_random_bits, BITS
+export bit_distance, change_random_bits, nbits
 
 
 # library routines to measure the bit distance between Uint8 sequences
-
-# BITS can be used directly to get the number of bits in a byte (note
-# 1-based indexing!)
 
 function count_bits(n::Uint8)
     mask = 1
@@ -24,10 +21,15 @@ end
 
 const BITS = Uint8[count_bits(n) for n = typemin(Uint8):typemax(Uint8)]
 
+function nbits(b::Uint8)
+    BITS[b+1]
+end
+nbits(b) = nbits(convert(Uint8, b & 0xff))
+
 function bit_distance(a::Array{Uint8}, b::Array{Uint8})
     distance = 0
     for (aa, bb) in zip(a, b)
-        distance = distance + BITS[(aa $ bb) + 1]
+        distance = distance + nbits(aa $ bb)
     end
     return distance
 end
@@ -61,7 +63,7 @@ end
 
 function test_distance()
     d = bit_distance(hex2bytes("10001f"), hex2bytes("300005"))
-    @assert d == 4
+    @assert d == 4 d
     println("test_distance ok")
 end
 

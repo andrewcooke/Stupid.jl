@@ -2,7 +2,7 @@
 module Prefix
 using BitDistance, Cipher, Gadfly, DataFrames, Rand2, Tasks2
 
-export tests, is_zero, loop_stats, no_count_hash
+export tests, is_zero, loop_stats, no_count_hash, run_to_repeat
 
 
 # it seems that a counter plaintext can corrupt the state in some way
@@ -18,16 +18,16 @@ export tests, is_zero, loop_stats, no_count_hash
 # the distance to repeated state with the counter plaintext.
 
 function run_to_repeat(s, t; hash=Base.hash, limit=-1)
-    n = 0
+    n, c = 0, nothing
     known = Set()
     while limit != 0
         h = hash(s)
         if in(h, known)
-            return n
+            return n, c
         end
         push!(known, h)
         n = n + 1
-        consume(t)
+        c = consume(t)
         limit = limit - 1
     end
     error("limit exceeded - no loop")
@@ -36,8 +36,8 @@ end
 function loop_stats(key, plain; debug=false, hash=Base.hash, limit=-1)
     s = State(key)
     t = encrypt(s, plain, debug=debug)
-    n1 = run_to_repeat(s, t, hash=hash, limit=limit)
-    n2 = run_to_repeat(s, t, hash=hash, limit=limit)
+    n1, _ = run_to_repeat(s, t, hash=hash, limit=limit)
+    n2, _ = run_to_repeat(s, t, hash=hash, limit=limit)
 #    if n2 <= 256
 #        collect(take(5, encrypt(s, plain, debug=true)))
 #    end
@@ -60,16 +60,18 @@ end
 # of course, the above shows multiples of 256 because count is in the
 # state.  but we know the count value anyway, so we can ignore that.
 
-function no_count_hash(s::State)
-    h::Int64 = s.key_length
-    h = h << 8 | s.pos_a
-    h = h << 8 | s.pos_b
-    h = h << 8 | s.pos_c
+function hash_by(s, n)
+    h::Uint64 = s.key_length
+    h = h << n $ s.pos_a
+    h = h << n $ s.pos_b
+    h = h << n $ s.pos_c
     for i = 1:s.key_length
-        h = h << 8 | s.key[i]
+        h = (h << n | h >> (64-n)) $ s.key[i]
     end
     h
 end
+
+no_count_hash(s::State) = s.key_length > 3 ? hash_by(s, 7) : hash_by(s, 8)
 
 function counter_stats()
     println("counter_stats begin")
@@ -85,7 +87,7 @@ function constant_stats()
     println("constant_stats begin")
     for i = 1:10
         key = collect2(Uint8, take(3, rands(Uint8)))
-        n1, n2, s = loop_stats(key, counter(), hash=no_count_hash)
+        n1, n2, s = loop_stats(key, constant(0x0), hash=no_count_hash)
         @printf("%s %d/%d\n", to_hex(key), n1, n2)
     end
     println("constant_stats end")
@@ -121,8 +123,8 @@ function counter_distribution(key_length)
 end
 
 # so 1/10 of 3 byte keys, 1/3 for larger.
-# most common state for 3 bytes is 000000 0/00 1/00 1/00
-# for 4 bytes is 00000000 0/00 1/00 1/00
+# most common state for 3 bytes is [I:xx K:000000 A:00/00 B:01/00 C:01/00]
+# for 4 bytes is [I:xx K:00000000 A:00/00 B:01/00 C:01/00]
 # for 8 bytes, many zeroes.
 # maximum delays 31, 124, 716
 
@@ -188,10 +190,10 @@ end
 
 
 function tests()
-    println("Prefix")
+#    println("Prefix")
 #    random_stats()
-    counter_stats()
-    constant_stats()
+#    counter_stats()
+#    constant_stats()
 #    counter_distribution(3)
 #    counter_distribution(4)
 #    counter_distribution(8)

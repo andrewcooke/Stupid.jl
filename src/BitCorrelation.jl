@@ -14,7 +14,7 @@ function counter_correlate(cipher, offset)
     offset = offset < 0 ? offset + 255 : offset
     c = 0
     for (a, b) in zip(cipher, counter(offset))
-        c = c + BITS[(0xff $ a $ b) & 0xff + 1] - 4
+        c = c + nbits(0xff $ a $ b) - 4
     end
     c
 end
@@ -57,7 +57,7 @@ end
 function plot_plain_correlation(n, shift, key_length, mask)
     println("plot_plain_correlation begin")
     offset, correlation, zero = Int[], Int[], Bool[]
-    correcn = BITS[mask + 1] / 2
+    correcn = nbits(mask) / 2
     for j = 1:n
         println(j)
         key, cipher = consume(take(1, encrypt_file(key_length)))
@@ -69,7 +69,7 @@ function plot_plain_correlation(n, shift, key_length, mask)
             phi = length(plain) - (i > 0 ? i : 0)
             c = 0
             for (a, b) in zip(cipher[clo:chi], plain[plo:phi])
-                c = c + BITS[(0xff $ a $ b) & mask + 1] - correcn
+                c = c + nbits((0xff $ a $ b) & mask) - correcn
             end
             push!(offset, i)
             push!(zero, i == 0)

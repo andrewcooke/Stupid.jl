@@ -1,6 +1,6 @@
 
 module Statistics
-using Cipher, Tasks2, Rand2, NHST, LittleBrother, Prefix
+using Cipher, Tasks2, Rand2, NHST, LittleBrother, Prefix, BitDistance
 
 export tests
 
@@ -8,8 +8,8 @@ export tests
 function stats8(n, m, source)
     for j = 1:m
         data = source()
-        @printf("n: %d; mean: %3.1f; std: %3.1f; bytes: %4.2f\n", 
-                n, mean(data), std(data), chisq8(data))
+        @printf("n: %d; mean: %3.1f; std: %3.1f; bytes: %4.2f; crln: %4.2f\n", 
+                n, mean(data), std(data), chisq8(data), correln(data))
         c2 = chisq2(data)
     end
 end
@@ -22,6 +22,10 @@ function chisq8(data)
 #    show(bins)
 #    println()
     return run(ChisqTest, bins).p_value
+end
+
+function correln(data)
+    mean(map(ab -> nbits(ab[1] $ ab[2]), zip(data, data[2:])))
 end
 
 function stats2(n, m, source)
@@ -79,9 +83,7 @@ function show_stats(n, key_length, label, m, plain; enc=encrypt)
     loops(key_length, 100, plain)
 end
 
-
-function tests()
-    println("Statistics")
+function show_all()
     text = read_file()
     n = length(text)
 
@@ -108,6 +110,103 @@ function tests()
     show_stats(n, 16, "\n0xff",    3, () -> constant(0xff))
     show_stats(n, 16, "\ncounter", 3, () -> counter())
     show_stats(n, 16, "\ntext",    3, () -> iterate(text))
+end
+
+function show_state(n, f, key_length)
+    for i = 1:n
+        k  = 0
+        while true
+            k = k + 1
+            s = State(collect2(Uint8, take(key_length, rands(Uint8))))
+            p = counter(0x0)
+            t = encrypt(s, p)
+            n1, c = run_to_repeat(s, t, hash=no_count_hash)
+            if n1 < 0
+                continue
+            end
+            n2 = 0
+            s2 = State(s)
+            for j = 1:f
+                n2, _ = run_to_repeat(s, t, hash=no_count_hash)
+                if n2 != 1
+                    break
+                end
+            end
+            if n2 != 1
+                continue
+            end
+            @printf("\ndiscard %d; after %d; cipher %02x\nstate %s\n", k, n1, c, s2)
+            trace(s2, consume(p)-1)
+            break
+        end
+    end    
+end
+
+function trace(state::State, plain; forwards=true)
+    plain::Uint = plain & 0xff
+    @printf("%80s\n", state)
+    @printf("old_a = %02x\n", state.pos_a)
+    old_a = state.pos_a
+    @printf("%80s\n", state)
+    @printf("pos_a = key[%02x] %% %02x = %02x %% %02x = %02x\n",
+            state.pos_b, state.key_length, 
+            state.key[state.pos_b+1], state.key_length, 
+            state.key[state.pos_b+1] % state.key_length)
+    state.pos_a = state.key[state.pos_b+1] % state.key_length
+    @printf("%80s\n", state)
+    @printf("pos_b = (pos_a + 1 + (key[%02x] %% %02x)) %% %02x = (%02x + 1 + (%02x %% %02x)) %% %02x = %02x\n",
+            state.pos_c, state.key_length - 1, state.key_length,
+            state.pos_a, state.key[state.pos_c+1], state.key_length - 1, state.key_length,
+            (state.pos_a + 1 +
+             state.key[state.pos_c+1] % (state.key_length - 1)
+             ) % state.key_length)
+    state.pos_b = (state.pos_a + 1 + 
+                   state.key[state.pos_c+1] % (state.key_length - 1)
+                   ) % state.key_length
+    @printf("%80s\n", state)
+    @printf("pos_c = (pos_a + 1 + (key[%02x] %% %02x)) %% %02x = (%02x + 1 + (%02x %% %02x)) %% %02x = %02x\n",
+            old_a, state.key_length - 1, state.key_length,
+            state.pos_a, state.key[old_a+1], state.key_length - 1, state.key_length,
+            (state.pos_a + 1 + 
+             state.key[old_a+1] % (state.key_length - 1)
+             ) % state.key_length)
+    state.pos_c = (state.pos_a + 1 + 
+                   state.key[old_a+1] % (state.key_length - 1)
+                   ) % state.key_length
+    @printf("%80s\n", state)
+    @printf("cipher = plain \$ key[%02x] \$ key[%02x] = %02x \$ %02x \$ %02x = %02x\n",
+            state.pos_a, state.pos_b,
+            plain, state.key[state.pos_a+1], state.key[state.pos_b+1],
+            plain $ state.key[state.pos_a+1] $ state.key[state.pos_b+1])
+    cipher::Uint8 = plain $ state.key[state.pos_a+1] $ state.key[state.pos_b+1]
+    @printf("%80s\n", state)
+    @printf("poison = %02x\n", forwards ? cipher : plain)
+    poison = forwards ? cipher : plain
+    @printf("key[%02x] = key[%02x] << 7 | key[%02x] >> 1 = %02x << 7 | %02x >> 1 = %02x\n",
+            state.pos_c, state.pos_c, state.pos_c,
+            state.key[state.pos_c+1], state.key[state.pos_c+1],
+            (state.key[state.pos_c+1] << 7 | state.key[state.pos_c+1] >> 1))
+    state.key[state.pos_c+1] = (state.key[state.pos_c+1] << 7 | 
+                                state.key[state.pos_c+1] >> 1)
+    @printf("%80s\n", state)
+    @printf("key[%02x] = key[%02x] \$ key[%02x] \$ %02x \$ %02x = %02x\n", 
+            state.pos_a, state.pos_a, state.pos_c, state.count, poison,
+            (state.key[state.pos_a+1] $ state.key[state.pos_c+1] $ state.count $ poison))
+    state.key[state.pos_a+1] = (state.key[state.pos_a+1] $ 
+                                state.key[state.pos_c+1] $ 
+                                state.count $ poison)
+    @printf("%80s\n", state)
+    @printf("count = %02x + 1 = %02x\n",
+            state.count, state.count + 1)
+    state.count = state.count + 1
+    cipher
+end
+
+
+function tests()
+    println("Statistics")
+    show_all()
+#    show_state(10, 1, 3)
 end
 
 end

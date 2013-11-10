@@ -47,6 +47,20 @@ be random.
 
 The analysis can be seen in [Statistics.jl](src/Statistics.jl).
 
+## Correlated Bits
+
+The small state and xor-logic of the PRNG suggests that ciphertext for
+constant plaintext will vary less than expected.  This can be measured
+as the mean number of bits common to successive ciphertext characters.
+A random stream will give 4 bits.
+
+For 3 byte keys, all constant plaintexts give anomalous values.
+
+For Little Brother](little-brother.txt) plaintext, 3 and 8 byte keys
+give anomalous values.
+
+The analysis can be seen in [Statistics.jl](src/Statistics.jl).
+
 ## Plaintext Injection Attack
 
 In some cases, injecting a pre-calculated fragment in the plaintext
@@ -60,17 +74,19 @@ page that displays user-supplied data (like a name or comment).
 The fragment is a counter (modulo 0xff) that mirrors the counter in
 the cipher state.  The probable mechanism is a combination of the
 counter plaintext canceling some (or all) counter bits and zeroing of
-state when a byte is xored with a similar value.
+state when a byte is xored with a similar value (the cipher character
+is already xored with state[A], it is then xored again with state[A]
+when mixed into the state).
 
 For 3 byte keys, a 32 byte fragment affects 4% of keys.  For 4 byte
-keys a longer fragment (120 bytes) is necessary to affect a similar
+keys a longer fragment (150 bytes) is necessary to affect a similar
 percentage.
 
 Even when the known unique state is not achieved (including larger key
 sizes), counter fragments *significantly* reduce the cipher state.  In
 a random sample (size 100) of 8 byte keys encrypting a counter all had
 state (excluding the internal counter) that repeated over unexpectedly
-short periods.  The longest period was 319 characters and 43% achieved
+short periods.  The longest period was 26 characters and 71% achieved
 stationary state (period 1) after 1500 characters or less.
 
 The analysis can be seen in [Prefix.jl](src/Prefix.jl).
@@ -169,9 +185,10 @@ cipher) is to look for repeated internal state.
 
 In [Statistics.jl](src/Statistics.jl) the internal state (excluding
 the counter, which is known to an extrernal attacker) is monitored
-during encryption.  If a repeated state is detected then the number of
-characters encrypted between the first and second occurence of the
-repeated state is recorded.  This is repeated for 100 random keys.
+during encryption.  If a state is detected a second time then
+encryption continues and the number of characters between the second
+and third occurence of that state is recorded.  This is repeated for
+100 random keys.
 
 A good quality PRNG would not repeat internal state until all
 available states had been exhausted (ie period = pow(2, N) where N is
@@ -180,17 +197,11 @@ external input might not be able to achieve that.  Birthday collisions
 might limit the period to pow(2, N/2).  For a 3 byte key that would be
 4096; for a 16 byte key ~2E19.
 
-In practice, for 16 byte keys, over 20% of keys have a distance
-between second and third repeats of just 1 character.  This behaviour
-is seen for both constant and random plaintext, and for [Little
-Brother](little-brother.txt).
+In practice, for 3 byte keys, the state repeats every 400 characters
+or so.  This is true even for random plaintext.
 
-Curiously, 8 byte keys behave better.  Only(!) 10% of keys had
-repeated state, for 0x55, 0xff or english plaintexts, within the first
-10,000 characters.
-
-These observations do not form an attack themselves, but help explain
-other attacks here.
+8 and 16 byte keys are better - in 100 tests only one 8 byte and no 16
+byte keys had repeating state over 10000 plaintext characters.
 
 ## Copyright
 
