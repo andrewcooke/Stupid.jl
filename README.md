@@ -56,7 +56,7 @@ A random stream will give 4 bits.
 
 For 3 byte keys, all constant plaintexts give anomalous values.
 
-For Little Brother](little-brother.txt) plaintext, 3 and 8 byte keys
+For [Little Brother](little-brother.txt) plaintext, 3 and 8 byte keys
 give anomalous values.
 
 The analysis can be seen in [Statistics.jl](src/Statistics.jl).
